@@ -74,7 +74,7 @@ def create_prompt(title, abstract):
     - "include_criteria_met": A list of strings of ALL satisfied inclusion criteria from the provided list.
     - "exclude_criteria_met": A list of strings of ALL satisfied exclusion criteria from the provided list.
     - "decision": A string, either "include" or "exclude", based on the logic above.
-    - "reasoning_summary (MAXIMUM 100 characters)": A list of strings, detailing your step-by-step thought process. Explain why each listed criterion (include or exclude) was met or not, and how you arrived at the final decision based on the decision logic. Be specific about what parts of the title or abstract led to your conclusions for each criterion.
+    - "reasoning_summary": A list of strings, detailing your step-by-step thought process. Explain why each listed criterion (include or exclude) was met or not, and how you arrived at the final decision based on the decision logic. Be specific about what parts of the title or abstract led to your conclusions for each criterion.
 
     Here is the paper:
     Title: "{title}"
@@ -196,7 +196,7 @@ def process_study(study_data):
 # --- Main Processing Logic ---
 def main():
 
-    my_df = pd.read_pickle("gemini_llm/my_df.pkl")
+    my_df = pd.read_pickle("my_df.pkl")
     my_df = my_df.loc[:10,:]
 
     results_list = []
