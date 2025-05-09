@@ -6,8 +6,11 @@ import time
 from dotenv  import load_dotenv
 from screener_agent.models.eligibility_criteria import InclusionCriterion, ExclusionCriterion
 from screener_agent.models.response_schema import ScreeningResponseSchema
+from utils.loggers import init_logger
+
 load_dotenv()
 # --- Configuration ---
+logger = init_logger(__file__)
 # IMPORTANT: Set your API key here or as an environment variable
 # Option 1: Set directly in code (less secure for shared scripts)
 # API_KEY = "YOUR_GEMINI_API_KEY"
@@ -19,11 +22,11 @@ load_dotenv()
 try:
     genai.configure(api_key=os.environ["GEMINI_API_KEY"])
 except KeyError:
-    print("🚨 GEMINI_API_KEY environment variable not set.")
-    print("Please set it before running the script.")
+    logger.error("🚨 GEMINI_API_KEY environment variable not set.")
+    logger.error("Please set it before running the script.")
     exit()
 except Exception as e:
-    print(f"🚨 Error configuring Gemini API: {e}")
+    logger.error(f"🚨 Error configuring Gemini API: {e}")
     exit()
 
 
@@ -115,9 +118,9 @@ def process_study(study_data):
             )
             
             # Debug: print raw response text
-            print("--- RAW LLM Response ---")
-            print(response.text)
-            print("------------------------")
+            logger.info("--- RAW LLM Response ---")
+            logger.info(response.text)
+            logger.info("------------------------")
 
             # The response text should be a JSON string.
             # Sometimes Gemini might add ```json ... ```, so we try to strip that.
@@ -139,9 +142,9 @@ def process_study(study_data):
             return result_dict
 
         except json.JSONDecodeError as e:
-            print(f"⚠️ JSONDecodeError for title '{title[:50]}...': {e}. Raw response: '{response.text[:200]}...'")
+            logger.error(f"⚠️ JSONDecodeError for title '{title[:50]}...': {e}. Raw response: '{response.text[:200]}...'")
             if attempt < max_retries - 1:
-                print(f"Retrying ({attempt+1}/{max_retries})...")
+                logger.info(f"Retrying ({attempt+1}/{max_retries})...")
                 time.sleep(2**(attempt + 1)) # Exponential backoff
                 continue
             else:
@@ -152,7 +155,7 @@ def process_study(study_data):
                     "reasoning_summary": [f"LLM did not return valid JSON. Error: {e}. Last raw response: '{response.text[:200]}'"]
                 }
         except genai.types.generation_types.BlockedPromptException as e:
-             print(f"🚫 Prompt blocked for title '{title[:50]}...': {e}")
+             logger.error(f"🚫 Prompt blocked for title '{title[:50]}...': {e}")
              return {
                 "include_criteria_met": [],
                 "exclude_criteria_met": ["Content blocked by API"],
@@ -160,9 +163,9 @@ def process_study(study_data):
                 "reasoning_summary": [f"The prompt or content was blocked by the API due to safety settings. Details: {e}"]
             }
         except Exception as e:
-            print(f"🚨 An error occurred while processing title '{title[:50]}...': {e}")
+            logger.error(f"🚨 An error occurred while processing title '{title[:50]}...': {e}")
             if attempt < max_retries - 1:
-                print(f"Retrying ({attempt+1}/{max_retries})...")
+                logger.info(f"Retrying ({attempt+1}/{max_retries})...")
                 time.sleep(2**(attempt + 1)) # Exponential backoff
                 continue
             else:
