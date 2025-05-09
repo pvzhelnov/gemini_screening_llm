@@ -4,6 +4,8 @@ import json
 import os
 import time
 from dotenv  import load_dotenv
+from screener_agent.models.eligibility_criteria import InclusionCriterion, ExclusionCriterion
+from screener_agent.models.response_schema import ScreeningResponseSchema
 load_dotenv()
 # --- Configuration ---
 # IMPORTANT: Set your API key here or as an environment variable
@@ -26,24 +28,7 @@ except Exception as e:
 
 
 # --- Define Criteria (as strings for the prompt) ---
-INCLUSION_CRITERIA_LIST = [
-    "English language",
-    "Effects on RBC properties/function",
-    "Liposome-RBC interaction",
-    "Relevant study type",
-    "Liposome/RBC properties with interaction implications",
-    "Applications of liposome-RBC interactions",
-    "Theoretical/computational study"
-]
-
-EXCLUSION_CRITERIA_LIST = [
-    "No liposome-RBC interaction implications",
-    "Other cell types without RBC component",
-    "Passing mention only",
-    "Full text unavailable",  # Note: LLM can only infer this if mentioned in abstract
-    "Duplicate publication",  # Note: LLM cannot verify this from a single entry
-    "Non-peer-reviewed or preprint" # LLM can try to infer (e.g. from "proceedings", "preprint server")
-]
+# Imported above
 
 # --- LLM Model Setup ---
 # For text-based tasks, gemini-pro is suitable
@@ -57,10 +42,10 @@ def create_prompt(title, abstract):
     Here are the criteria:
 
     Inclusion Criteria:
-    {chr(10).join([f"- {c}" for c in INCLUSION_CRITERIA_LIST])}
+    {InclusionCriterion.list_criteria()}
 
     Exclusion Criteria:
-    {chr(10).join([f"- {c}" for c in EXCLUSION_CRITERIA_LIST])}
+    {ExclusionCriterion.list_criteria()}
 
     Decision Logic:
     1. First, assess if any Exclusion Criteria are met. If ANY exclusion criterion is met, the decision is "exclude".
@@ -123,7 +108,9 @@ def process_study(study_data):
                     # candidate_count=1, # Default
                     # stop_sequences=['...'], # If needed
                     max_output_tokens=20480, # Adjust if JSON is truncated
-                    temperature=0.2 # Lower temperature for more deterministic classification
+                    temperature=0.2, # Lower temperature for more deterministic classification,
+                    response_mime_type='application/json',
+                    response_schema=ScreeningResponseSchema
                 )
             )
             
