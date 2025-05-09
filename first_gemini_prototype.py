@@ -4,6 +4,8 @@ import json
 import os
 import time
 from dotenv  import load_dotenv
+import sys
+
 from screener_agent.models.eligibility_criteria import InclusionCriterion, ExclusionCriterion
 from screener_agent.models.response_schema import ScreeningResponseSchema
 from utils.loggers import init_logger
@@ -11,6 +13,9 @@ from utils.loggers import init_logger
 load_dotenv()
 # --- Configuration ---
 logger = init_logger(__file__)
+screener_agent_model_name = 'gemini-2.5-pro-exp-03-25'
+path_to_save_csv = "analyzed_studies.csv"
+
 # IMPORTANT: Set your API key here or as an environment variable
 # Option 1: Set directly in code (less secure for shared scripts)
 # API_KEY = "YOUR_GEMINI_API_KEY"
@@ -35,7 +40,7 @@ except Exception as e:
 
 # --- LLM Model Setup ---
 # For text-based tasks, gemini-pro is suitable
-model = genai.GenerativeModel('gemini-2.5-pro-exp-03-25')
+model = genai.GenerativeModel(screener_agent_model_name)
 
 # --- Helper Function to Create Prompt ---
 def create_prompt(title, abstract):
@@ -185,56 +190,61 @@ def process_study(study_data):
 
 # --- Main Processing Logic ---
 def main():
+    try:
+        my_df = pd.read_pickle("my_df.pkl")
+        my_df = my_df.head(10).copy()
+    except Exception as e:
+        logger.error(f"Error occurred when trying to read dataset:\n{e}")
+        sys.exit(1)
 
-    my_df = pd.read_pickle("my_df.pkl")
-    my_df = my_df.loc[:10,:]
-
-    results_list = []
+    results_dict = {}
     for index, row in my_df.iterrows():
-        print(f"\nProcessing row {index}...")
-        study_info = row['study_identifier']
-        
-        # Handle cases where 'study_identifier' might be a string representation of a dict
-        if isinstance(study_info, str):
-            try:
-                study_info = json.loads(study_info.replace("'", "\"")) # Basic attempt to fix common string issues
-            except json.JSONDecodeError:
-                print(f"⚠️  Could not parse 'study_identifier' string in row {index} as JSON. Skipping.")
-                results_list.append({
-                    "include_criteria_met": [],
-                    "exclude_criteria_met": ["Invalid input format for study_identifier"],
-                    "decision": "exclude",
-                    "reasoning_summary": ["'study_identifier' was a string that could not be parsed as JSON."]
-                })
-                continue
+        logger.info(f"\nProcessing row {index}...")
+        study_info = row.to_dict()
         
         llm_output = process_study(study_info)
-        results_list.append(llm_output)
+        llm_output['model_name'] = screener_agent_model_name
+        results_dict[index] = llm_output
         
         # Optional: Print intermediate results
-        print(f"Title: {study_info.get('title', 'N/A')[:60]}...")
-        print(f"Decision: {llm_output.get('decision')}")
-        print(f"Include Met: {llm_output.get('include_criteria_met')}")
-        print(f"Exclude Met: {llm_output.get('exclude_criteria_met')}")
-        print(f"Summary: {llm_output.get('reasoning_summary')}") # Can be verbose
+        logger.info(f"Title: {study_info.get('title', 'N/A')[:60]}...")
+        logger.info(f"Abstract: {study_info.get('abstract', 'N/A')[:60]}...")
+        logger.info(f"Decision: {llm_output.get('decision')}")
+        logger.info(f"Include Met: {llm_output.get('include_criteria_met')}")
+        logger.info(f"Exclude Met: {llm_output.get('exclude_criteria_met')}")
+        logger.info(f"Summary: {llm_output.get('reasoning_summary')}") # Can be verbose
         
         # Be respectful of API rate limits if you have many rows
         time.sleep(1) # Add a small delay if needed
+        break
+    
+    try:
+        # Make sure new cols are present in df index
+        ground_truth_cols = ["include_criteria_met", "exclude_criteria_met", "decision", "reasoning_summary", 'model_name']
+        new_cols = ['llm_analysis']
+        new_cols.extend([f'llm_{key}' for key in ground_truth_cols])
+        my_df[new_cols] = None
 
-    # Add results to the DataFrame
-    # Method 1: As a new column containing the dictionary
-    my_df['llm_analysis'] = results_list
+        def update_row(row: pd.Series, results_dict) -> pd.Series:
+            index = row.name
+            llm_output = results_dict.get(index, None)
+            if llm_output:
+                row[new_cols[0]] = llm_output
+                for key in ground_truth_cols:
+                    row[f'llm_{key}'] = llm_output.get(key)
+            return row
 
-    # Method 2: Explode the dictionary into multiple columns (more common)
-    for key in ["include_criteria_met", "exclude_criteria_met", "decision", "reasoning_summary"]:
-        my_df[f'llm_{key}'] = [r.get(key) for r in results_list]
+        # Add results to the DataFrame
+        my_df = my_df.apply(lambda row: update_row(row, results_dict), axis=1)
 
-    print("\n\n--- Final DataFrame with LLM Analysis ---")
-    print(my_df.head())
+        logger.info("\n\n--- Final DataFrame with LLM Analysis ---")
+        logger.info(my_df.info())
 
-    # You can save it to a CSV or Excel file
-    my_df.to_csv("analyzed_studies.csv", index=False)
-    # my_df.to_excel("analyzed_studies.xlsx", index=False)
+        # You can save it to a CSV or Excel file
+        my_df.to_csv(path_to_save_csv, index=True)
+        # my_df.to_excel("analyzed_studies.xlsx", index=False)
+    except Exception as e:
+        logger.error(f"Error occurred when trying to save results:\n{e}")
 
 if __name__ == '__main__':
     main()
