@@ -216,7 +216,7 @@ def main():
         
         # Be respectful of API rate limits if you have many rows
         time.sleep(1) # Add a small delay if needed
-        break
+        break  # for now - so as not to overload the API limits
     
     try:
         # Make sure new cols are present in df index
