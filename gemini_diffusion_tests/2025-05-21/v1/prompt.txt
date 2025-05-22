@@ -1,0 +1,109 @@
+you are sys.stdout.
+
+from typing import List, Generic, TypeVar
+from pydantic import BaseModel, Field
+from enum import Enum
+import google.generativeai as genai
+
+class EligibilityCriterion(str, Enum):
+    @classmethod
+    def list_criteria(self) -> str:  # used to print these in system instruction
+        return {"\n".join(f"- {criterion.value}" for criterion in list(self))}
+
+class InclusionCriterion(EligibilityCriterion):
+    ENGLISH = "English language"
+    RBC_EFFECT = "Effects on RBC properties/function"
+    INTERACTION = "Liposome-RBC interaction"
+    STUDY_TYPE = "Relevant study type"
+    PROPERTY_IMPLICATIONS = "Liposome/RBC properties with interaction implications"
+    APPLICATIONS = "Applications of liposome-RBC interactions"
+    THEORETICAL = "Theoretical/computational study"
+
+class ExclusionCriterion(EligibilityCriterion):
+    NO_INTERACTION = "No liposome-RBC interaction implications"
+    OTHER_CELLS = "Other cell types without RBC component"
+    PASSING_MENTION = "Passing mention only"
+    NO_FULL_TEXT = "Full text unavailable"  # Note: LLM can only infer this if mentioned in abstract
+    DUPLICATE = "Duplicate publication"  # Note: LLM cannot verify this from a single entry
+    NON_PEER_REVIEWED = "Non-peer-reviewed or preprint"  # LLM can try to infer (e.g. from "proceedings", "preprint server")
+
+# --- Enums for Decision ---
+class FinalDecision(str, Enum):
+    include = "include"
+    exclude = "exclude"
+
+# --- Criterion-Level Reasoning ---
+T = TypeVar("T", bound=EligibilityCriterion)  # making passing of criterion type possible via generics
+class EvaluatedCriterion(BaseModel, Generic[T]):
+    criterion: T = Field(..., description="A specific inclusion or exclusion criterion")
+    met: bool = Field(..., description="Whether the criterion was satisfied")
+    reasoning: str = Field(..., description="Explanation of why the criterion was or wasn't met")
+
+# --- Main Analysis Response ---
+class ScreeningResponseSchema(BaseModel):
+    include_criteria_met: List[EvaluatedCriterion[InclusionCriterion]] = Field(
+        description="Evaluation of each inclusion criterion with explanations"
+    )
+    exclude_criteria_met: List[EvaluatedCriterion[ExclusionCriterion]] = Field(
+        description="Evaluation of each exclusion criterion with explanations"
+    )
+    decision: FinalDecision = Field(
+        description="The final decision: include or exclude"
+    )
+    reasoning_summary: str = Field(
+        description="Concise explanation of the overall decision, incorporating key reasoning"
+    )
+
+# --- Helper Function to Create Prompt ---
+def create_prompt(title, abstract):
+    prompt = f"""
+    You are an expert scientific paper screener. Your task is to analyze a given title and abstract and determine if it should be included or excluded based on the provided criteria.
+
+    Here are the criteria:
+
+    Inclusion Criteria:
+    {InclusionCriterion.list_criteria()}
+
+    Exclusion Criteria:
+    {ExclusionCriterion.list_criteria()}
+
+    Decision Logic:
+    1. First, assess if any Exclusion Criteria are met. If ANY exclusion criterion is met, the decision is "exclude".
+    2. If no exclusion criteria are met, then assess Inclusion Criteria.
+    3. The paper MUST be in "English language". If not, it's "exclude".
+    4. The decision is "include" if ("English language" IS met AND "Effects on RBC properties/function" IS met).
+    5. OR the decision is "include" if ("English language" IS met AND "Liposome/RBC properties with interaction implications" IS met).
+    6. If none of the above "include" conditions (4 or 5) are met (and no exclusion criteria were met), the decision is "exclude".
+
+    Provide your response as a JSON object with the following keys:
+    - "include_criteria_met": A list of strings of ALL satisfied inclusion criteria from the provided list.
+    - "exclude_criteria_met": A list of strings of ALL satisfied exclusion criteria from the provided list.
+    - "decision": A string, either "include" or "exclude", based on the logic above.
+    - "reasoning_summary": A list of strings, detailing your step-by-step thought process. Explain why each listed criterion (include or exclude) was met or not, and how you arrived at the final decision based on the decision logic. Be specific about what parts of the title or abstract led to your conclusions for each criterion.
+
+    Here is the paper:
+    Title: "{title}"
+    Abstract: "{abstract}"
+
+    Respond ONLY with the JSON object. Do not add any text before or after the JSON.
+    """
+    return prompt
+
+if __name__ == "__main__":
+    title = "Surface Engineering for Cell-Based Therapies: Techniques for Manipulating Mammalian Cell Surfaces"
+    abstract = "The introduction of cell-based therapies has provided new and unique strategies to treat many diseases and disorders including the recent approval of CAR-T cell therapy for the leukemia. Cell surface engineering is a methodology in which the cell surface is tailored to modulate cellular function and interactions. In addition to genetic engineering of cell surface proteins, a wide array of robust, innovative and elegant approaches have been developed to selectively target the cell surface. In this review, we will introduce the leading strategies currently used in cell surface engineering including broadly reactive chemical ligations and physical associations as well as more controlled approaches as demonstrated in genetic, enzymatic and metabolic engineering. Prominent applications of these strategies for cell-based therapies will be highlighted including targeted cell death, control over stem cell fate, immunoevasion, blood transfusion and the delivery of cells to target tissues. Advances will be focused specifically on cells which are the most promising in generating cell-based therapeutics including red blood cells, white blood cells (lymphocytes, macrophages), stem cells (multipotent and pluripotent), islet cells, cancer cells, and endothelial cells."
+
+    prompt = create_prompt(title, abstract)
+
+    model = genai.GenerativeModel('gemini-diffusion')
+
+    response = model.generate_content(
+        prompt,
+        generation_config=genai.types.GenerationConfig(
+            temperature=0.0,
+            response_mime_type='application/json',
+            response_schema=ScreeningResponseSchema
+        )
+    )
+
+    print(response.text)

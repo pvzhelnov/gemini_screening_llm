@@ -1,0 +1,154 @@
+
+{
+
+    "include_criteria_met": [
+
+        {
+
+            "criterion": "English language",
+
+            "met": true,
+
+            "reasoning": "The title and abstract are entirely in English."
+
+        },
+
+        {
+
+            "criterion": "Effects on RBC properties/function",
+
+            "met": true,
+
+            "reasoning": "The abstract mentions 'red blood cells' as a type of cell where cell surface engineering strategies are applied for cell-based therapies. This implies potential effects on the properties or function of red blood cells."
+
+        },
+
+        {
+
+            "criterion": "Liposome-RBC interaction",
+
+            "met": false,
+
+            "reasoning": "The abstract discusses cell surface engineering for various cell types, including red blood cells, but does not specifically mention liposomes or the interaction between liposomes and red blood cells."
+
+        },
+
+        {
+
+            "criterion": "Relevant study type",
+
+            "met": true,
+
+            "reasoning": "The abstract describes itself as a 'review', which is a relevant study type for discussing techniques and applications of cell surface engineering for cell-based therapies."
+
+        },
+
+        {
+
+            "criterion": "Liposome/RBC properties with interaction implications",
+
+            "met": false,
+
+            "reasoning": "While the abstract discusses RBC properties in the context of cell surface engineering, it does not discuss liposome properties or properties related to interactions with RBCs."
+
+        },
+
+        {
+
+            "criterion": "Applications of liposome-RBC interactions",
+
+            "met": false,
+
+            "reasoning": "The abstract lists various applications of cell surface engineering for cell-based therapies (e.g., targeted cell death, stem cell fate), but does not mention applications specifically involving liposome-RBC interactions."
+
+        },
+
+        {
+
+            "criterion": "Theoretical/computational study",
+
+            "met": false,
+
+            "reasoning": "The abstract describes a review of techniques and applications of cell surface engineering, not a theoretical or computational study."
+
+        }
+
+    ],
+
+    "exclude_criteria_met": [
+
+        {
+
+            "criterion": "No liposome-RBC interaction implications",
+
+            "met": true,
+
+            "reasoning": "The abstract does not mention liposomes or their interaction with red blood cells. Therefore, there are no implications of liposome-RBC interaction discussed."
+
+        },
+
+        {
+
+            "criterion": "Other cell types without RBC component",
+
+            "met": false,
+
+            "reasoning": "The abstract explicitly mentions 'red blood cells' as one of the cell types discussed, which is an RBC component."
+
+        },
+
+        {
+
+            "criterion": "Passing mention only",
+
+            "met": false,
+
+            "reasoning": "The mention of 'red blood cells' is part of the core discussion of cell types where cell surface engineering strategies are applied for cell-based therapies, not just a passing mention."
+
+        },
+
+        {
+
+            "criterion": "Full text unavailable",
+
+            "met": false,
+
+            "reasoning": "I cannot determine if the full text is available based solely on the title and abstract provided. The abstract itself does not state the full text is unavailable."
+
+        },
+
+        {
+
+            "criterion": "Duplicate publication",
+
+            "met": false,
+
+            "reasoning": "I cannot determine if this is a duplicate publication based solely on the title and abstract."
+
+        },
+
+        {
+
+            "criterion": "Non-peer-reviewed or preprint",
+
+            "met": false,
+
+            "reasoning": "I cannot determine if this is a non-peer-reviewed publication or preprint based solely on the title and abstract."
+
+        }
+
+    ],
+
+    "decision": "exclude",
+
+    "reasoning_summary": [
+
+        "First, I assessed exclusion criteria. The abstract mentions 'red blood cells', so 'Other cell types without RBC component' is *not* met. The mention of 'red blood cells' is central to the discussion, so 'Passing mention only' is *not* met. I cannot determine 'Full text unavailable', 'Duplicate publication', or 'Non-peer-reviewed or preprint' from the title and abstract. However, the abstract does not mention liposomes or their interaction with red blood cells, so 'No liposome-RBC interaction implications' *is* met.",
+
+        "Next, I assessed inclusion criteria. The title and abstract are entirely in English, so 'English language' *is* met. The abstract discusses cell surface engineering for 'red blood cells', implying potential effects on their properties, so 'Effects on RBC properties/function' *is* met. The abstract does not mention liposomes or their interaction with red blood cells, so 'Liposome-RBC interaction' is *not* met. The abstract is described as a 'review', so 'Relevant study type' *is* met. The abstract does not discuss liposome properties or properties related to interactions with RBCs, so 'Liposome/RBC properties with interaction implications' is *not* met. The abstract does not mention applications involving liposome-RBC interactions, so 'Applications of liposome-RBC interactions' is *not* met. The abstract is a review, not a theoretical or computational study, so 'Theoretical/computational study' is *not* met.",
+
+        "Finally, I applied the decision logic. Since an exclusion criterion ('No liposome-RBC interaction implications') was met, the final decision is 'exclude' according to step 1 of the decision logic."
+
+    ]
+
+}
