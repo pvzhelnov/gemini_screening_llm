@@ -1,0 +1,106 @@
+response:
+  content:
+    questions:
+    - question_uid:
+        unique_question_id: 1
+      question_formulation: Is this an observational study?
+      responses:
+      - value: 'Yes'
+        notes:
+        - if the study Is a cohort study, case-control study, self-controlled study,
+          or cross-sectional study
+        - Is an interrupted time series analysis or controlled before and after study
+      - value: 'No'
+        notes:
+        - 'if the study: Is a different type of observational study (e.g., case report,
+          case series)'
+        - Is a randomized controlled trial
+        - Is a literature review (e.g., narrative review, scoping review, systematic
+          review, rapid review) or meta-analysis
+        - Is a study protocol
+        - Is a conference abstract
+        - Is an opinion piece (e.g., editorial, commentary, perspective)
+        - Is a review article or guideline
+      - value: Maybe/Unclear
+        notes: []
+      question_note: null
+    - question_uid:
+        unique_question_id: 2
+      question_formulation: Does this study examine pharmaceutical products?
+      responses:
+      - value: 'Yes'
+        notes:
+        - if the study Examines any pharmaceutical product including prescription
+          drugs, over-the-counter drugs, vaccines, therapy products, pharmaceutical
+          solutions, or sterile solutions
+      - value: 'No'
+        notes:
+        - 'if the study: Does not examine any pharmaceutical product'
+      - value: Maybe/Unclear
+        notes: []
+      question_note: null
+    - question_uid:
+        unique_question_id: 3
+      question_formulation: Does this study examine drug supply chain disruptions?
+      responses:
+      - value: 'Yes'
+        notes:
+        - if the study Examines drug supply chain disruptions including any shortages,
+          product discontinuations, drug recalls, or market withdrawals
+      - value: 'No'
+        notes:
+        - 'if the study: Does not examine drug supply chain disruptions'
+      - value: Maybe/Unclear
+        notes: []
+      question_note: null
+    - question_uid:
+        unique_question_id: 4
+      question_formulation: Does this study examine the impact on drug utilization
+        and access?
+      responses:
+      - value: 'Yes'
+        notes:
+        - if the study Examines the impact of drug supply chain disruptions on drug
+          utilization and access using population-level drug utilization data including
+          wholesaler purchasing data, dispensing data, claims data, or drug administration
+          data
+      - value: 'No'
+        notes:
+        - 'if the study: Does not examine the impact of drug supply chain disruptions
+          on drug utilization and access'
+      - value: Maybe/Unclear
+        notes: []
+      question_note: null
+    flow_diagram:
+    - step_id: 1
+      is_last_step: false
+      on_yes:
+        unique_question_id: 2
+      on_maybe:
+        unique_question_id: 2
+      on_no:
+        decision: Exclude
+    - step_id: 2
+      is_last_step: false
+      on_yes:
+        unique_question_id: 3
+      on_maybe:
+        unique_question_id: 3
+      on_no:
+        decision: Exclude
+    - step_id: 3
+      is_last_step: false
+      on_yes:
+        unique_question_id: 4
+      on_maybe:
+        unique_question_id: 4
+      on_no:
+        decision: Exclude
+    - step_id: 4
+      is_last_step: true
+      on_yes:
+        decision: Include
+      on_maybe:
+        decision: Include
+      on_no:
+        decision: Exclude
