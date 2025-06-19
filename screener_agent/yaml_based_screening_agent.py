@@ -362,9 +362,22 @@ def main():
         logger.info(f"   - Exclude: {exclude_count}")
         logger.info(f"   - Expected: {expected_label}")
 
+    def save_results():
+        # Get the current Unix timestamp
+        timestamp = int(time.time())
+
+        # Create a subdirectory based on the timestamp
+        output_dir = "yaml_screening_results"
+        os.makedirs(output_dir, exist_ok=True)
+
+        # Define the file path within the subdirectory
+        filename = f'{output_dir}_{timestamp}.json'
+        output_file = os.path.join(output_dir, filename)
+
         # Save results
-    with open('yaml_screening_results.json', 'w') as f:
+        with open(output_file, 'w') as f:
             json.dump(all_results, f, indent=2)
+    save_results()
     
     logger.info("✅ Results saved to yaml_screening_results.json")
 
