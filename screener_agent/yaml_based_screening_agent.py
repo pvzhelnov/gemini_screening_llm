@@ -336,13 +336,13 @@ def main():
     logger = init_logger(__name__)
     
     # Initialize the agent
-    yaml_path = "/Users/billy/Documents/gemini_screening_llm/shortages_eligibility_schema.yml"
+    yaml_path = os.getenv("ELIGIBILITY_SCHEMA_YAML_PATH")
     agent = YAMLBasedScreeningAgent(yaml_path)
     
     # Test files
     test_files = [
-        ("/Users/billy/Documents/gemini_screening_llm/dummy_dataset/dummy_shortages_irrelevant.ris", "irrelevant"),
-        ("/Users/billy/Documents/gemini_screening_llm/dummy_dataset/dummy_shortages_relevant.ris", "relevant")
+        (os.getenv("IRRELEVANT_RIS_PATH"), "irrelevant"),
+        (os.getenv("RELEVANT_RIS_PATH"), "relevant")
     ]
     
     all_results = []
@@ -361,10 +361,10 @@ def main():
         logger.info(f"   - Include: {include_count}")
         logger.info(f"   - Exclude: {exclude_count}")
         logger.info(f"   - Expected: {expected_label}")
-    
-    # Save results
+
+        # Save results
     with open('yaml_screening_results.json', 'w') as f:
-        json.dump(all_results, f, indent=2)
+            json.dump(all_results, f, indent=2)
     
     logger.info("✅ Results saved to yaml_screening_results.json")
 
