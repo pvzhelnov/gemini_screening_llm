@@ -1,0 +1,202 @@
+[
+  {
+    "file": "shortages_irrelevant_3799.ris",
+    "expected_label": "irrelevant",
+    "total_studies": 3,
+    "results": [
+      {
+        "question_1_response": {
+          "unique_question_id": 1,
+          "question_formulation": "Is this an observational study?",
+          "response": "Yes",
+          "reasoning": "The study design is a case series with interrupted time series analysis, which is a type of observational study."
+        },
+        "question_2_response": {
+          "unique_question_id": 2,
+          "question_formulation": "Does this study examine pharmaceutical products?",
+          "response": "Yes",
+          "reasoning": "The study examines e-prescribed medications dispensed and sold to patients, which are pharmaceutical products."
+        },
+        "question_3_response": {
+          "unique_question_id": 3,
+          "question_formulation": "Does this study examine drug supply chain disruptions?",
+          "response": "Maybe/Unclear",
+          "reasoning": "The study examines medication dispensing after discontinuation, which could potentially be related to supply chain disruptions, but it is not explicitly stated."
+        },
+        "question_4_response": {
+          "unique_question_id": 4,
+          "question_formulation": "Does this study examine the impact on drug utilization and access?",
+          "response": "No",
+          "reasoning": "The study examines the proportion of e-prescriptions dispensed after discontinuation, but it does not explicitly examine the impact on overall drug utilization and access at a population level."
+        },
+        "final_decision": "Exclude",
+        "decision_reasoning": "Based on the flow logic, this study should be excluded because it does not examine the impact on drug utilization and access.",
+        "study_index": 0,
+        "title": "Pharmacy e-Prescription Dispensing Before and After CancelRx Implementation.",
+        "abstract": "Importance: An estimated 1.5% to nearly 5% of medications are dispensed after discontinuation in the electronic health record (EHR), with 34% meeting criteria for high risk of potential harm., Objective: To evaluate the association of the implementation of e-prescription cancellation messaging (CancelRx) with medication dispensing after discontinuation of e-prescriptions in the EHR., Design, Setting, and Participants: This case series with interrupted time series analysis included patients who had at least 1 medication e-prescribed in ambulatory care to a health system pharmacy and discontinued in the 2-year study period from 1 year prior to approximately 1 year after CancelRx implementation (January 15, 2018, to December 7, 2019). Prior to CancelRx implementation, changes to e-prescribed medications within the EHR were not electronically communicated to health system pharmacies, which used separate pharmacy management software. Statistical analysis was performed from November 2020 to June 2023 (primary analysis from March 2021 to May 2022)., Exposure: Implementation of CancelRx., Main Outcomes and Measures: The primary outcome was the proportion of e-prescribed medications dispensed and sold to patients by pharmacies within 6 months after discontinuation in the EHR. A medication was defined as dispensed after discontinuation if the timestamp of dispensing was at least 1 minute and less than 6 months after the timestamp of discontinuation in the EHR. A secondary outcome was the proportion of discontinued medications that was reordered within 120 days., Results: A total of 53298 qualifying e-prescriptions that were discontinued were identified for 17451 unique patients (mean [SD] age, 50.6 [18.2] years; 9332 women [53.5%]). After CancelRx implementation, 22443 (85.9%) of the 26127 discontinued e-prescriptions resulted in a CancelRx transaction. In interrupted time series analysis, the proportion of prescriptions dispensed after discontinuation decreased from a baseline of 8.0% (2162 of 27171) to 1.4% (369 of 26127; P < .001), without a significant week-to-week trend (beta = 0.000158; P = .37)., Conclusions and Relevance: In this case series with interrupted time series analysis, findings suggest that CancelRx implementation was associated with an immediate and persistent reduction in the proportion of e-prescriptions sold after discontinuation in the EHR. Widespread implementation of CancelRx may significantly improve medication safety through the reduction of medication dispensing after discontinuation by prescribers."
+      },
+      {
+        "question_1_response": {
+          "unique_question_id": 1,
+          "question_formulation": "Is this an observational study?",
+          "response": "Yes",
+          "reasoning": "The study uses in-depth interviews to understand the effect of the drug cartel war on drug use harms and HIV risk of PWID. This is an observational study."
+        },
+        "question_2_response": {
+          "unique_question_id": 2,
+          "question_formulation": "Does this study examine pharmaceutical products?",
+          "response": "No",
+          "reasoning": "The study examines the impact of drug cartel wars on drug use harms and HIV risk of PWID, focusing on heroin and crack cocaine use. It does not specifically examine pharmaceutical products."
+        },
+        "question_3_response": {
+          "unique_question_id": 3,
+          "question_formulation": "Does this study examine drug supply chain disruptions?",
+          "response": "Maybe/Unclear",
+          "reasoning": "The study mentions drug supply shortages in El Paso, but it is not the primary focus. It is unclear if the study examines drug supply chain disruptions in detail."
+        },
+        "question_4_response": {
+          "unique_question_id": 4,
+          "question_formulation": "Does this study examine the impact on drug utilization and access?",
+          "response": "No",
+          "reasoning": "The study examines the impact of drug cartel wars on drug use harms and HIV risk, but it does not examine the impact on drug utilization and access using population-level drug utilization data."
+        },
+        "final_decision": "Exclude",
+        "decision_reasoning": "Based on the flow logic, this study should be excluded because it does not examine pharmaceutical products.",
+        "study_index": 1,
+        "title": "Institutional violence from police militarization and drug cartel wars as a 'Big Event' and its influence on drug use harms and HIV risk in people who inject drugs on the U.S.-Mexico border.",
+        "abstract": "BACKGROUND: Globally, the US-Mexico Border is one of the largest drug trafficking regions, with Ciudad Juarez (CJ) and El Paso (EP) making up the second-largest border crossing in the world. Border communities are places where the risk of drug use harm and infectious diseases such as HIV are augmented due to the confluence of factors operating across the physical, social, economic and policy environment. Although the two cities are economically, culturally, and socially intertwined, each has distinct criminal justice systems and policy practices aimed at curtailing substance use. Between 2008 and 2011, the CJ/EP region experienced an unprecedented level of violence that stemmed from the intersection of police militarization and drug cartel wars, which profoundly shaped every aspect of life. Little research has documented the impact of drug cartel wars on the drug use and health harms of people who inject drugs (PWID) living in CJ and EP. The purpose of the study is to understand the effect that the drug cartel war had on the drug use harms and HIV risk of PWID., METHODS: We conducted 40 in-depth interviews with people who inject drugs who resided in CJ or EP and had used heroin or crack cocaine in the last 30 days, and asked how police militarization and drug cartel war affected their daily lives. The risk environment framework informed the analysis and interpretation of findings., RESULTS: Findings indicated that the risk environment was profoundly altered as PWID residing in CJ experienced profound changes in their daily lives that promoted engagement in behaviors that increased drug use and health harms including HIV risk, exacerbated trauma, and prevented use of substance use treatment and harm reduction services. The risk environment was also altered in EP, where PWID experienced drug supply shortages, violent policing practices, and reduced availability of harm reduction services. Findings underscore the permeability of risk environments across geographical borders., CONCLUSION: The intersection of law enforcement militarization and drug cartel wars can be conceptualized as a 'big event' because it disrupts the drug market economy, leads to drug shortages, promotes entrance into the drug market economy by people who use drugs, reshapes drug use sites, and constrains the provision of harm reduction services. The stability of the harm reduction system in CJ was negatively impacted and limited the ability of individuals to reduce harm. Our findings show that drug cartel wars render the CJ/EP region extremely susceptible to drug use and health harms, while also creating vulnerability by severely restricting its ability to respond. Traditional recommendations to intervene to limit the impact of risk environments on the drug use harms of PWID need to be reconsidered in the context of drug cartel wars. Copyright \u00a9 2023 Elsevier B.V. All rights reserved."
+      },
+      {
+        "question_1_response": {
+          "unique_question_id": 1,
+          "question_formulation": "Is this an observational study?",
+          "response": "Yes",
+          "reasoning": "The study uses an interrupted time series design, which is a type of observational study."
+        },
+        "question_2_response": {
+          "unique_question_id": 2,
+          "question_formulation": "Does this study examine pharmaceutical products?",
+          "response": "Yes",
+          "reasoning": "The study examines low-price chemical medicines (LPCM) and low-price traditional Chinese medicines (LPTCM), which are pharmaceutical products."
+        },
+        "question_3_response": {
+          "unique_question_id": 3,
+          "question_formulation": "Does this study examine drug supply chain disruptions?",
+          "response": "Maybe/Unclear",
+          "reasoning": "The study mentions the policy was implemented to relieve the pressure of drug shortages, which suggests potential supply chain disruptions. However, it is not explicitly stated."
+        },
+        "question_4_response": {
+          "unique_question_id": 4,
+          "question_formulation": "Does this study examine the impact on drug utilization and access?",
+          "response": "No",
+          "reasoning": "The study examines the impact on drug prices and expenditures, but not on drug utilization or access."
+        },
+        "final_decision": "Exclude",
+        "decision_reasoning": "Based on the flow logic, this study should be excluded because it does not examine the impact on drug utilization and access.",
+        "study_index": 2,
+        "title": "The effect of the implementation of low price medicine policy on medicine price in China: A retrospective study.",
+        "abstract": "In an effort to relieve the pressure of drug shortages, the Chinese government implemented Low-price Medicines (LPM) policy to raise the price cap in July 2014. The purpose of this study is to examine the effect of the implementation of this policy on drug price in China. Price data of 491 LPM, including 218 low-price chemical medicines (LPCM) and 273 low-price traditional Chinese medicines (LPTCM), were collected from 699 hospitals. We used interrupted time series design to identify the variation of monthly Laspeyres Indexes (LI) and Paasche Indexes (PI) for LPM, LPCM, and LPTCM. The result demonstrated that although LPM expenditures increased, the proportion of LPM expenditures accounting for all medicine expenditures fell from 3.6% to 3.2%. After the implementation of LPM policy, there was a significant increasing trend in LPM-PI, LPCM-PI, and LPTCM-PI. The trend in LPM-LI and LPCM-LI was found from descending to rising. However, for LPTCM, the trend in the LI remained to decrease after the policy implementation. Despite the LPM policy had an increasing impact on the LPM drug price, the proportion of LPM expenditures accounting for all medicine expenditures did not increase. More efforts are needed in the future to promote the rational drug use in China. Copyright \u00a9 2018 John Wiley & Sons, Ltd."
+      }
+    ]
+  },
+  {
+    "file": "shortages_relevant_93.ris",
+    "expected_label": "relevant",
+    "total_studies": 3,
+    "results": [
+      {
+        "question_1_response": {
+          "unique_question_id": 1,
+          "question_formulation": "Is this an observational study?",
+          "response": "Yes",
+          "reasoning": "This study is an observational study because it measures changes in treatment patterns before and during a drug shortage using a 5% random sample of Medicare beneficiaries. This design aligns with an interrupted time series analysis."
+        },
+        "question_2_response": {
+          "unique_question_id": 2,
+          "question_formulation": "Does this study examine pharmaceutical products?",
+          "response": "Yes",
+          "reasoning": "The study examines Bacillus Calmette-Guerin (BCG), mitomycin C, and gemcitabine, which are pharmaceutical products used for intravesical treatment."
+        },
+        "question_3_response": {
+          "unique_question_id": 3,
+          "question_formulation": "Does this study examine drug supply chain disruptions?",
+          "response": "Yes",
+          "reasoning": "The study explicitly mentions and examines the Bacillus Calmette-Guerin (BCG) drug shortage, which is a drug supply chain disruption."
+        },
+        "question_4_response": {
+          "unique_question_id": 4,
+          "question_formulation": "Does this study examine the impact on drug utilization and access?",
+          "response": "Yes",
+          "reasoning": "The study examines the impact of the BCG drug shortage on the utilization of BCG and other intravesical treatments using Medicare claims data, which reflects population-level drug utilization."
+        },
+        "final_decision": "Include",
+        "decision_reasoning": "Based on the flow logic, this study should be included because it is an observational study that examines pharmaceutical products, drug supply chain disruptions, and the impact on drug utilization and access.",
+        "study_index": 0,
+        "title": "Variation in Statewide Intravesical Treatment Rates for Non-Muscle Invasive Bladder Cancer During the Bacillus Calmette-Guerin Drug Shortage.",
+        "abstract": "OBJECTIVE: To measure the changes in treatment patterns for non-muscle invasive bladder cancer before and during the Bacillus Calmette-Guerin (BCG) drug shortage., MATERIALS AND METHODS: We used a 5% random sample of Medicare beneficiaries and identified 7971 bladder cancer patients (2648 pre-BCG shortage and 5323 during the shortage) >=66years of age who received intravesical treatment within 1year of diagnosis between 2010 and 2017. The BCG shortage period was defined from July 2012 ongoing. Full induction treatment with BCG, mitomycin C, gemcitabine, or other intravesical agents was defined as receiving >=5 of 6 treatments within 60days. State-level BCG use before and during the drug shortage was compared in US states reporting at least 50 patients in each period. Independent variables included year of index date, age, sex, race, rurality, and region of residence., RESULTS: BCG utilization rates decreased 5.9% in the shortage period (95% CI (-8.2%)-(-3.7%)). The proportion of patients that completed a full induction course of BCG decreased from 31.0% in the pre-shortage period to 27.6% in the shortage period (P=.002). 84% of reporting states (16 of 19) had decreased BCG utilization ranging between 5% and 36% compared to pre-shortage rates., CONCLUSION: During the BCG drug shortage, eligible bladder cancer patients were less likely to receive gold standard intravesical BCG with a large variation in treatment patterns between US states. Copyright \u00a9 2023 Elsevier Inc. All rights reserved."
+      },
+      {
+        "question_1_response": {
+          "unique_question_id": 1,
+          "question_formulation": "Is this an observational study?",
+          "response": "Yes",
+          "reasoning": "The study uses an interrupted time series analysis, which is a type of observational study."
+        },
+        "question_2_response": {
+          "unique_question_id": 2,
+          "question_formulation": "Does this study examine pharmaceutical products?",
+          "response": "Yes",
+          "reasoning": "The study examines ranitidine, other histamine-2 receptor antagonists (H2RAs), and proton pump inhibitors (PPIs), which are pharmaceutical products."
+        },
+        "question_3_response": {
+          "unique_question_id": 3,
+          "question_formulation": "Does this study examine drug supply chain disruptions?",
+          "response": "Yes",
+          "reasoning": "The study examines the ranitidine recalls and shortages, which are drug supply chain disruptions."
+        },
+        "question_4_response": {
+          "unique_question_id": 4,
+          "question_formulation": "Does this study examine the impact on drug utilization and access?",
+          "response": "Yes",
+          "reasoning": "The study examines the impact of the ranitidine shortage on acid suppression drug utilization using purchasing data."
+        },
+        "final_decision": "Include",
+        "decision_reasoning": "Based on the flow logic, this study should be included because all questions were answered with 'Yes'.",
+        "study_index": 1,
+        "title": "Major Shifts in Acid Suppression Drug Utilization After the 2019 Ranitidine Recalls in Canada and United States.",
+        "abstract": "BACKGROUND: Drug shortages are a complex global challenge, and few studies have analyzed quantitative data on their impacts. In September 2019, detection of a nitrosamine impurity in ranitidine led to recalls and shortages., AIMS: We investigated the extent of the ranitidine shortage and its impacts on acid suppression drug utilization in Canada and the United States (US)., METHODS: We conducted an interrupted time series analysis of acid suppression drug purchases in Canada and the US from 2016 through 2021 using IQVIA's MIDAS database. We used autoregressive integrated moving average models to determine the impact of the shortage on purchasing rates for ranitidine, other histamine-2 receptor antagonists (H2RAs), and proton pump inhibitors (PPIs)., RESULTS: Prior to the recalls, 20,439,915 ranitidine units were purchased monthly in Canada and 189,038,496 in the US on average. After the recalls started in September 2019, purchasing rates decreased for ranitidine (Canada p = 0.0048, US p < 0.0001) and increased for non-ranitidine H2RAs (Canada p = 0.0192, US p = 0.0534). One month into the recalls, purchasing rates dropped by 99% (Canada) and 53% (US) for ranitidine and increased by 128.3% (Canada) and 37.3% (US) for non-ranitidine H2RAs. PPI purchasing rates did not change significantly in either country., CONCLUSIONS: The ranitidine shortage led to immediate and sustained shifts in H2RA utilization in both countries, potentially affecting hundreds of thousands of patients. Our results emphasize the need for future studies of the clinical and financial implications of the shortage, and the importance of ongoing work to mitigate and prevent drug shortages. Copyright \u00a9 2023. The Author(s), under exclusive licence to Springer Science+Business Media, LLC, part of Springer Nature."
+      },
+      {
+        "question_1_response": {
+          "unique_question_id": 1,
+          "question_formulation": "Is this an observational study?",
+          "response": "Yes",
+          "reasoning": "This is a retrospective study, which falls under the definition of an observational study."
+        },
+        "question_2_response": {
+          "unique_question_id": 2,
+          "question_formulation": "Does this study examine pharmaceutical products?",
+          "response": "Yes",
+          "reasoning": "The study examines intravenous opioid medications."
+        },
+        "question_3_response": {
+          "unique_question_id": 3,
+          "question_formulation": "Does this study examine drug supply chain disruptions?",
+          "response": "Yes",
+          "reasoning": "The study mentions a shortage of intravenous opioid medications announced by the FDA."
+        },
+        "question_4_response": {
+          "unique_question_id": 4,
+          "question_formulation": "Does this study examine the impact on drug utilization and access?",
+          "response": "Yes",
+          "reasoning": "The study examines the impact of the opioid shortage on IV opioid utilization, oral opioid use, length of stay, and readmissions."
+        },
+        "final_decision": "Include",
+        "decision_reasoning": "Based on the flow logic, this study should be included because it meets all the inclusion criteria.",
+        "study_index": 2,
+        "title": "Opioid Use in Vaso-Occlusive Crisis During Intravenous Opioid Drug Shortage.",
+        "abstract": "Introduction: In October 2017, the Food and Drug Administration announced a shortage of intravenous (IV) opioid medications. Patients with sickle cell disease (SCD) are particularly vulnerable, as high amounts of IV opioid medications are standard therapy during vaso-occlusive crises (VOC). Our institution responded to the crises by implementing IV to oral (PO) conversions of opioid therapies and encouraging multimodal pain management with non-opioid medications. Objectives: The primary objective was the assessment of IV opioid medication utilization before and during the shortage. Secondary objectives included total opioid consumption, length of stay, and prescribing of non-opioid analgesics. Methods: This single-institution retrospective study included patients >18 years of age admitted to adult medicine teams with VOC during February 2017 or February 2018. The amount of opioid medication administered to patients during both periods was assessed, and quantities were then converted to PO morphine milligram equivalents and compared between years. The number of patients receiving scheduled non-opioid medications were also compared. Length of stay and readmissions were compared between years. Results: Between 2017 and 2018, IV opioid use for VOC decreased by 52% on inpatient services, and there was a 34% reduction in overall opioid use. Oral opioid use more than doubled during the period (10.2% in 2017 vs 39.1% in 2018, P < .01). LOS between 2017 and 2018 (6 vs 6 days, P = .4774) and total number of ED visits (27 vs 8, P = .276) were similar. There were significantly fewer 30-day readmissions in 2018 versus 2017 (15 vs 28, P = .025). Conclusion:  The implementation of IV opioid restrictions resulted in a decrease in IV opioid use in treatment of VOC in patients with SCD without causing increases in length of stay or readmissions. Oral opioids should be considered an option for VOC management in patients with SCD. Copyright \u00a9 The Author(s) 2022."
+      }
+    ]
+  }
+]
