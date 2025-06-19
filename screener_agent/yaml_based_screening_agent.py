@@ -18,6 +18,7 @@ from screener_agent.models.eligibility_criteria.shortages_v1 import (
 )
 from screener_agent.models.response_schema.shortages_v1 import DrugShortagesScreeningResponse
 from utils.loggers import init_logger
+from screener_agent.metrics_analyzer import ScreeningMetricsAnalyzer
 
 load_dotenv()
 
@@ -341,8 +342,8 @@ def main():
     
     # Test files
     test_files = [
-        (os.getenv("IRRELEVANT_RIS_PATH"), "irrelevant"),
-        (os.getenv("RELEVANT_RIS_PATH"), "relevant")
+        (os.getenv("IRRELEVANT_RIS_PATH"), "dummy_dataset/dummy_shortages_irrelevant.ris"),
+        (os.getenv("RELEVANT_RIS_PATH"), "dummy_dataset/dummy_shortages_relevant.ris")
     ]
     
     all_results = []
@@ -377,9 +378,29 @@ def main():
         # Save results
         with open(output_file, 'w') as f:
             json.dump(all_results, f, indent=2)
-    save_results()
+        
+        return output_file
     
-    logger.info("✅ Results saved to yaml_screening_results.json")
+    # Save results and get the filepath
+    results_file = save_results()
+    logger.info(f"✅ Results saved to {results_file}")
+    
+    # Generate comprehensive metrics analysis
+    logger.info("\n🔬 Generating comprehensive metrics analysis...")
+    try:
+        analyzer = ScreeningMetricsAnalyzer()
+        analyzer.load_results_from_json(results_file)
+        
+        # Generate complete analysis with all visualizations and reports
+        outputs = analyzer.generate_complete_analysis()
+        
+        logger.info("\n🎉 Metrics analysis complete! Generated files:")
+        for output_type, filepath in outputs.items():
+            logger.info(f"   • {output_type.replace('_', ' ').title()}: {filepath}")
+        
+    except Exception as e:
+        logger.error(f"❌ Failed to generate metrics analysis: {e}")
+        logger.error("Continuing without metrics analysis...")
 
 
 if __name__ == "__main__":
