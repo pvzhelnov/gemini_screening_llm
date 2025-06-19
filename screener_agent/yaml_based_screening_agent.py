@@ -309,7 +309,7 @@ Make sure:
         studies = studies[:3]
         
         results = {
-            'file': ris_path,
+            'file': os.path.basename(ris_path),  # trimming to filename.ris for privacy
             'expected_label': expected_label,
             'total_studies': len(studies),
             'results': []
