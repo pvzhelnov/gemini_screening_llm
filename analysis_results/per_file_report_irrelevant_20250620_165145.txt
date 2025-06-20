@@ -1,0 +1,49 @@
+📊 PER-FILE SCREENING ANALYSIS REPORT
+============================================================
+
+📁 FILE: irrelevant
+   Full name: dummy_shortages_irrelevant.ris
+
+📈 BASIC STATISTICS
+   • Total studies analyzed: 3
+   • Studies to include: 0
+   • Studies to exclude: 3
+   • Correct predictions: 1 (33.3%)
+   • Incorrect predictions: 2 (66.7%)
+
+🎯 PERFORMANCE METRICS
+   • Overall Accuracy: 0.333 (33.3%)
+   • Balanced Accuracy: 0.333 (33.3%)
+   • Precision: 0.000 (0.0%)
+   • Recall: 0.000 (0.0%)
+   • F1-Score: 0.000 (0.0%)
+
+🏷️  LABEL-SPECIFIC ACCURACY
+   • Include studies accuracy: N/A (no include studies in this file)
+   • Exclude studies accuracy: 0.333 (33.3%)
+     - Correctly identified: 1/3
+
+🔍 DETAILED BREAKDOWN
+   • True Positives (Correctly included): 0
+   • True Negatives (Correctly excluded): 1
+   • False Positives (Incorrectly included): 2
+   • False Negatives (Incorrectly excluded): 0
+
+💡 PERFORMANCE ASSESSMENT
+   • Overall: Performance needs improvement (Accuracy: 0.333)
+
+⚠️  IDENTIFIED ISSUES
+   • 2 false positive(s) - studies incorrectly included
+   • Low precision (0.000) - many irrelevant studies included
+   • Low recall (0.000) - missing relevant studies
+
+🔧 RECOMMENDATIONS
+   • Review inclusion criteria to reduce false positives
+
+❌ INCORRECT PREDICTIONS
+   • Study 0: Impact of Global Supply Chain Disruptions on Essential Medic...
+     Expected: Exclude, Predicted: Include
+   • Study 2: Regulatory Framework for Emergency Drug Importation: Lessons...
+     Expected: Exclude, Predicted: Include
+
+📅 Report generated on: 2025-06-20 16:51:47

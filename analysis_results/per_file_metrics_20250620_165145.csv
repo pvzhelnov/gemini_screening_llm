@@ -1,0 +1,3 @@
+file_name,total_studies,correct_predictions,incorrect_predictions,accuracy,balanced_accuracy,precision,recall,f1_score,true_positives,true_negatives,false_positives,false_negatives,total_include_studies,total_exclude_studies,correct_include_predictions,correct_exclude_predictions,include_accuracy,exclude_accuracy
+dummy_shortages_irrelevant.ris,3,1,2,0.3333333333333333,0.3333333333333333,0.0,0.0,0.0,0,1,2,0,0,3,0,1,0.0,0.3333333333333333
+dummy_shortages_relevant.ris,3,3,0,1.0,1.0,1.0,1.0,1.0,3,0,0,0,3,0,3,0,1.0,0.0

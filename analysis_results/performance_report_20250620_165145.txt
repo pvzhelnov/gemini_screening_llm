@@ -1,0 +1,31 @@
+🔍 SCREENING AGENT PERFORMANCE REPORT
+==================================================
+
+📊 OVERVIEW
+   • Total studies analyzed: 6
+   • Correct predictions: 4 (66.7%)
+   • Incorrect predictions: 2 (33.3%)
+
+📈 PERFORMANCE METRICS
+   • Accuracy: 0.667 (66.7%)
+   • Balanced Accuracy: 0.667 (66.7%)
+   • Precision: 0.600 (60.0%)
+   • Recall: 1.000 (100.0%)
+   • F1-Score: 0.750 (75.0%)
+
+🎯 CONFUSION MATRIX
+   • True Positives (Correctly included): 3
+   • True Negatives (Correctly excluded): 1
+   • False Positives (Incorrectly included): 2
+   • False Negatives (Incorrectly excluded): 0
+
+💡 PERFORMANCE INTERPRETATION
+   • Overall Performance: Needs Improvement (Accuracy: 0.667)
+   • Precision: Many false positives - review inclusion criteria (0.600)
+   • Recall: Excellent sensitivity - catches most relevant studies (1.000)
+
+🔧 RECOMMENDATIONS
+   • Consider tightening inclusion criteria to reduce false positives
+   • Investigate 2 false positive(s) to understand misclassification patterns
+
+📅 Report generated on: 2025-06-20 16:51:46

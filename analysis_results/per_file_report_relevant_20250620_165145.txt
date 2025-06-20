@@ -1,0 +1,35 @@
+📊 PER-FILE SCREENING ANALYSIS REPORT
+============================================================
+
+📁 FILE: relevant
+   Full name: dummy_shortages_relevant.ris
+
+📈 BASIC STATISTICS
+   • Total studies analyzed: 3
+   • Studies to include: 3
+   • Studies to exclude: 0
+   • Correct predictions: 3 (100.0%)
+   • Incorrect predictions: 0 (0.0%)
+
+🎯 PERFORMANCE METRICS
+   • Overall Accuracy: 1.000 (100.0%)
+   • Balanced Accuracy: 1.000 (100.0%)
+   • Precision: 1.000 (100.0%)
+   • Recall: 1.000 (100.0%)
+   • F1-Score: 1.000 (100.0%)
+
+🏷️  LABEL-SPECIFIC ACCURACY
+   • Include studies accuracy: 1.000 (100.0%)
+     - Correctly identified: 3/3
+   • Exclude studies accuracy: N/A (no exclude studies in this file)
+
+🔍 DETAILED BREAKDOWN
+   • True Positives (Correctly included): 3
+   • True Negatives (Correctly excluded): 0
+   • False Positives (Incorrectly included): 0
+   • False Negatives (Incorrectly excluded): 0
+
+💡 PERFORMANCE ASSESSMENT
+   • Overall: Excellent performance (Accuracy: 1.000)
+
+📅 Report generated on: 2025-06-20 16:51:47
