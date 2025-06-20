@@ -342,8 +342,8 @@ def main():
     
     # Test files
     test_files = [
-        (os.getenv("IRRELEVANT_RIS_PATH"), "dummy_dataset/dummy_shortages_irrelevant.ris"),
-        (os.getenv("RELEVANT_RIS_PATH"), "dummy_dataset/dummy_shortages_relevant.ris")
+        (os.getenv("IRRELEVANT_RIS_PATH"), "irrelevant"),
+        (os.getenv("RELEVANT_RIS_PATH"), "relevant"),
     ]
     
     all_results = []
