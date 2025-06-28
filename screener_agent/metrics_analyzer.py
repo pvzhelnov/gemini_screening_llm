@@ -86,6 +86,7 @@ class ScreeningMetricsAnalyzer:
                     'file': file_name,
                     'study_index': result.get('study_index', -1),
                     'title': result.get('title', ''),
+                    'abstract': result.get('abstract', ''),
                     'expected_label': expected_label,
                     'true_label': true_label,
                     'predicted_label': pred_label,
@@ -100,6 +101,22 @@ class ScreeningMetricsAnalyzer:
         self.logger.info(f"Extracted {len(y_true)} predictions for analysis")
         return y_true, y_pred
     
+    def _calculate_additional_metrics(self, y_true_binary, y_pred_binary):
+        """Calculate sensitivity, specificity, NPV, and return as dict."""
+        cm = confusion_matrix(y_true_binary, y_pred_binary)
+        if cm.shape == (2, 2):
+            tn, fp, fn, tp = cm.ravel()
+            sensitivity = tp / (tp + fn) if (tp + fn) > 0 else 0  # recall
+            specificity = tn / (tn + fp) if (tn + fp) > 0 else 0
+            npv = tn / (tn + fn) if (tn + fn) > 0 else 0
+        else:
+            sensitivity = specificity = npv = 0
+        return {
+            'sensitivity': sensitivity,
+            'specificity': specificity,
+            'npv': npv
+        }
+
     def calculate_metrics(self) -> Dict[str, Any]:
         """Calculate comprehensive classification metrics."""
         y_true, y_pred = self._extract_predictions_and_labels()
@@ -119,6 +136,10 @@ class ScreeningMetricsAnalyzer:
             'recall_macro': recall_score(y_true_binary, y_pred_binary, average='macro', zero_division=0),
             'f1_score_macro': f1_score(y_true_binary, y_pred_binary, average='macro', zero_division=0)
         }
+        
+        # Add additional metrics
+        add_metrics = self._calculate_additional_metrics(y_true_binary, y_pred_binary)
+        metrics.update(add_metrics)
         
         # Confusion matrix
         cm = confusion_matrix(y_true_binary, y_pred_binary)
@@ -148,7 +169,108 @@ class ScreeningMetricsAnalyzer:
         
         self.metrics = metrics
         return metrics
-    
+
+    def get_metrics_table(self) -> str:
+        """Return a markdown table of key metrics."""
+        m = self.metrics
+        table = (
+            "| Metric | Value |\n"
+            "|--------|-------|\n"
+            f"| Sensitivity (Recall) | {m.get('sensitivity', 0):.3f} |\n"
+            f"| Specificity | {m.get('specificity', 0):.3f} |\n"
+            f"| Balanced Accuracy | {m.get('balanced_accuracy', 0):.3f} |\n"
+            f"| Accuracy | {m.get('accuracy', 0):.3f} |\n"
+            f"| Precision | {m.get('precision', 0):.3f} |\n"
+            f"| NPV | {m.get('npv', 0):.3f} |\n"
+            f"| F1 Score | {m.get('f1_score', 0):.3f} |\n"
+        )
+        return table
+
+    def get_model_parameters_table(self, params=None) -> str:
+        """Return a markdown table of model parameters. Pass a dict or use defaults."""
+        # If params not provided, use defaults or placeholders
+        if params is None:
+            params = {
+                'Temperature': 0.2,
+                'Maximum length': 4096,
+                'Stop sequences': '-',
+                'Top-p': '-',
+                'Top-k': '-',
+                'Frequency penalty': '-',
+                'Presence penalty': '-',
+            }
+        table = (
+            "| Parameter | Value |\n"
+            "|-----------|-------|\n"
+            + "\n".join(f"| {k} | {v} |" for k, v in params.items())
+        )
+        return table
+
+    def save_metrics_table_csv(self, save_path: str = None) -> str:
+        """Save the key metrics table as a CSV file."""
+        import pandas as pd
+        m = self.metrics
+        data = [
+            ['Sensitivity (Recall)', m.get('sensitivity', 0)],
+            ['Specificity', m.get('specificity', 0)],
+            ['Balanced Accuracy', m.get('balanced_accuracy', 0)],
+            ['Accuracy', m.get('accuracy', 0)],
+            ['Precision', m.get('precision', 0)],
+            ['NPV', m.get('npv', 0)],
+            ['F1 Score', m.get('f1_score', 0)],
+        ]
+        df = pd.DataFrame(data, columns=['Metric', 'Value'])
+        if save_path is None:
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            save_path = f"metrics_table_{timestamp}.csv"
+        df.to_csv(save_path, index=False)
+        self.logger.info(f"✅ Metrics table saved to {save_path}")
+        return save_path
+
+    def save_model_parameters_table_csv(self, params=None, save_path: str = None) -> str:
+        """Save the model parameters table as a CSV file."""
+        import pandas as pd
+        if params is None:
+            params = {
+                'Temperature': 0.2,
+                'Maximum length': 4096,
+                'Stop sequences': '-',
+                'Top-p': '-',
+                'Top-k': '-',
+                'Frequency penalty': '-',
+                'Presence penalty': '-',
+            }
+        data = [[k, v] for k, v in params.items()]
+        df = pd.DataFrame(data, columns=['Parameter', 'Value'])
+        if save_path is None:
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            save_path = f"model_parameters_table_{timestamp}.csv"
+        df.to_csv(save_path, index=False)
+        self.logger.info(f"✅ Model parameters table saved to {save_path}")
+        return save_path
+
+    def output_ris_files_by_llm_label(self, relevant_path='llm_relevant.ris', irrelevant_path='llm_irrelevant.ris'):
+        """Output two RIS files: one for LLM-relevant (Include) and one for LLM-irrelevant (Exclude) studies."""
+        if not self.detailed_results:
+            raise ValueError("No detailed results available. Call calculate_metrics() first.")
+        relevant = [r for r in self.detailed_results if r['predicted_label'] == 'Include']
+        irrelevant = [r for r in self.detailed_results if r['predicted_label'] == 'Exclude']
+        def to_ris(records):
+            ris = []
+            for i, r in enumerate(records):
+                # Use .get and handle list/str for abstract
+                abstract = r.get('abstract', '')
+                if isinstance(abstract, list):
+                    abstract = ' '.join([str(a) for a in abstract if a])
+                ris.append(f"TY  - JOUR\nTI  - {r.get('title', '')}\nAB  - {abstract}\nER  -\n")
+            return ''.join(ris)
+        with open(relevant_path, 'w', encoding='utf-8') as f:
+            f.write(to_ris(relevant))
+        with open(irrelevant_path, 'w', encoding='utf-8') as f:
+            f.write(to_ris(irrelevant))
+        self.logger.info(f"✅ Wrote {len(relevant)} relevant and {len(irrelevant)} irrelevant studies to RIS files.")
+        return relevant_path, irrelevant_path
+
     def calculate_per_file_metrics(self) -> Dict[str, Dict[str, Any]]:
         """Calculate comprehensive metrics for each file individually."""
         if not self.detailed_results:
@@ -371,6 +493,15 @@ class ScreeningMetricsAnalyzer:
                 'category': 'confusion_matrix'
             })
         
+        # Additional metrics
+        additional_metrics = ['sensitivity', 'specificity', 'npv']
+        for metric in additional_metrics:
+            summary_data.append({
+                'metric': metric,
+                'value': self.metrics[metric],
+                'category': 'additional_metrics'
+            })
+        
         # Count metrics
         count_metrics = ['total_studies', 'correct_predictions', 'incorrect_predictions']
         for metric in count_metrics:
@@ -434,27 +565,16 @@ class ScreeningMetricsAnalyzer:
     def generate_complete_analysis(self, output_dir: str = "analysis_results") -> Dict[str, str]:
         """Generate complete analysis with all outputs including enhanced per-file analysis."""
         os.makedirs(output_dir, exist_ok=True)
-        
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        
-        # Calculate metrics if not done already
         if not self.metrics:
             self.calculate_metrics()
-        
-        # Calculate per-file metrics
         self.calculate_per_file_metrics()
-        
         outputs = {}
-        
-        # Save all existing outputs
         outputs['confusion_matrix'] = self.create_confusion_matrix_plot(
             os.path.join(output_dir, f"confusion_matrix_{timestamp}.png")
         )
         outputs['metrics_plot'] = self.create_metrics_summary_plot(
             os.path.join(output_dir, f"metrics_summary_{timestamp}.png")
-        )
-        outputs['comprehensive_plot'] = self.create_comprehensive_analysis_plot(
-            os.path.join(output_dir, f"comprehensive_analysis_{timestamp}.png")
         )
         outputs['detailed_csv'] = self.save_detailed_results_csv(
             os.path.join(output_dir, f"detailed_results_{timestamp}.csv")
@@ -465,588 +585,66 @@ class ScreeningMetricsAnalyzer:
         outputs['report'] = self.save_friendly_report(
             os.path.join(output_dir, f"performance_report_{timestamp}.txt")
         )
-        
-        # Add new per-file analysis outputs
-        outputs['per_file_detailed_plot'] = self.create_per_file_detailed_plot(
-            os.path.join(output_dir, f"per_file_detailed_analysis_{timestamp}.png")
+        # Save metrics table CSV
+        outputs['metrics_table_csv'] = self.save_metrics_table_csv(
+            os.path.join(output_dir, f"metrics_table_{timestamp}.csv")
         )
-        outputs['per_file_comparison_plot'] = self.create_per_file_comparison_plot(
-            os.path.join(output_dir, f"per_file_comparison_{timestamp}.png")
+        # Save model parameters table CSV (use real params if available)
+        outputs['model_parameters_table_csv'] = self.save_model_parameters_table_csv(
+            {
+                'Temperature': 0.2,
+                'Maximum length': 4096,
+                'Stop sequences': '-',
+                'Top-p': '-',
+                'Top-k': '-',
+                'Frequency penalty': '-',
+                'Presence penalty': '-',
+            },
+            os.path.join(output_dir, f"model_parameters_table_{timestamp}.csv")
         )
-        outputs['per_file_metrics_csv'] = self.save_per_file_metrics_csv(
-            os.path.join(output_dir, f"per_file_metrics_{timestamp}.csv")
-        )
-        outputs['per_file_report'] = self.save_per_file_report(
-            save_path=os.path.join(output_dir, f"per_file_report_all_files_{timestamp}.txt")
-        )
-        
-        # Generate individual file reports
-        for file_name in self.per_file_metrics.keys():
-            # Extract just the base filename and sanitize it
-            base_name = os.path.basename(file_name)
-            safe_name = base_name.replace('.ris', '').replace('dummy_shortages_', '')
-            individual_report_path = os.path.join(output_dir, f"per_file_report_{safe_name}_{timestamp}.txt")
-            outputs[f'individual_report_{safe_name}'] = self.save_per_file_report(
-                file_name=file_name, 
-                save_path=individual_report_path
-            )
-        
-        # Print friendly reports to console
-        print("\n" + self.generate_friendly_report())
-        print("\n" + "="*80)
-        print(self.generate_per_file_report())
-        
+        # Output RIS files for relevant/irrelevant
+        relevant_ris = os.path.join(output_dir, f"llm_relevant_{timestamp}.ris")
+        irrelevant_ris = os.path.join(output_dir, f"llm_irrelevant_{timestamp}.ris")
+        self.output_ris_files_by_llm_label(relevant_ris, irrelevant_ris)
+        outputs['llm_relevant_ris'] = relevant_ris
+        outputs['llm_irrelevant_ris'] = irrelevant_ris
         self.logger.info(f"✅ Complete analysis with per-file enhancements saved to {output_dir}")
         self.logger.info(f"✅ Generated {len(outputs)} output files")
         return outputs
     
-    def create_per_file_detailed_plot(self, save_path: str = None) -> str:
-        """Create detailed per-file analysis visualization."""
-        if not self.per_file_metrics:
-            self.calculate_per_file_metrics()
-        
-        n_files = len(self.per_file_metrics)
-        fig, axes = plt.subplots(2, n_files, figsize=(5 * n_files, 10))
-        
-        if n_files == 1:
-            axes = axes.reshape(2, 1)
-        
-        file_names = list(self.per_file_metrics.keys())
-        
-        for i, file_name in enumerate(file_names):
-            metrics = self.per_file_metrics[file_name]
-            
-            # Top row: Confusion Matrix
-            ax_cm = axes[0, i]
-            cm = np.array(metrics['confusion_matrix'])
-            
-            # Handle different confusion matrix shapes
-            if cm.size == 0:
-                cm = np.array([[0, 0], [0, 0]])
-            elif cm.shape == (1, 1):
-                # Expand to 2x2 if only one class present
-                cm = np.array([[cm[0, 0], 0], [0, 0]]) if metrics['total_exclude_studies'] > 0 else np.array([[0, 0], [0, cm[0, 0]]])
-            
-            sns.heatmap(cm, annot=True, fmt='d', cmap='Blues',
-                       xticklabels=['Exclude', 'Include'],
-                       yticklabels=['Exclude', 'Include'],
-                       ax=ax_cm)
-            
-            short_name = file_name.replace('.ris', '').replace('dummy_shortages_', '')
-            ax_cm.set_title(f'{short_name}\nConfusion Matrix', fontsize=12, fontweight='bold')
-            ax_cm.set_ylabel('True Label')
-            ax_cm.set_xlabel('Predicted Label')
-            
-            # Bottom row: Performance Metrics
-            ax_metrics = axes[1, i]
-            metric_names = ['Accuracy', 'Precision', 'Recall', 'F1-Score']
-            metric_values = [
-                metrics['accuracy'],
-                metrics['precision'],
-                metrics['recall'],
-                metrics['f1_score']
-            ]
-            
-            bars = ax_metrics.bar(metric_names, metric_values, 
-                                 color=['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728'])
-            ax_metrics.set_title(f'{short_name}\nPerformance Metrics', fontsize=12, fontweight='bold')
-            ax_metrics.set_ylabel('Score')
-            ax_metrics.set_ylim(0, 1)
-            ax_metrics.tick_params(axis='x', rotation=45)
-            
-            # Add value labels on bars
-            for bar, value in zip(bars, metric_values):
-                ax_metrics.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.02,
-                               f'{value:.3f}', ha='center', va='bottom', fontweight='bold', fontsize=9)
-            
-            # Add study count info
-            total_studies = metrics['total_studies']
-            correct = metrics['correct_predictions']
-            ax_metrics.text(0.5, 0.85, f'Studies: {total_studies}\nCorrect: {correct}',
-                           transform=ax_metrics.transAxes, ha='center', va='center',
-                           bbox=dict(boxstyle="round,pad=0.3", facecolor='lightgray', alpha=0.7),
-                           fontsize=9)
-        
-        plt.suptitle('Per-File Detailed Analysis', fontsize=16, fontweight='bold')
-        plt.tight_layout()
-        
-        if save_path is None:
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            save_path = f"per_file_detailed_analysis_{timestamp}.png"
-        
-        plt.savefig(save_path, dpi=300, bbox_inches='tight')
-        plt.close()
-        
-        self.logger.info(f"✅ Per-file detailed plot saved to {save_path}")
-        return save_path
-
-    def create_per_file_comparison_plot(self, save_path: str = None) -> str:
-        """Create a comparison plot showing metrics across all files."""
-        if not self.per_file_metrics:
-            self.calculate_per_file_metrics()
-        
-        file_names = list(self.per_file_metrics.keys())
-        short_names = [f.replace('.ris', '').replace('dummy_shortages_', '') for f in file_names]
-        
-        # Prepare data for plotting
-        metrics_data = {
-            'Accuracy': [self.per_file_metrics[f]['accuracy'] for f in file_names],
-            'Precision': [self.per_file_metrics[f]['precision'] for f in file_names],
-            'Recall': [self.per_file_metrics[f]['recall'] for f in file_names],
-            'F1-Score': [self.per_file_metrics[f]['f1_score'] for f in file_names]
-        }
-        
-        fig, axes = plt.subplots(2, 2, figsize=(15, 10))
-        axes = axes.flatten()
-        
-        colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728']
-        
-        for i, (metric_name, values) in enumerate(metrics_data.items()):
-            ax = axes[i]
-            bars = ax.bar(short_names, values, color=colors[i], alpha=0.7)
-            ax.set_title(f'{metric_name} by File', fontsize=14, fontweight='bold')
-            ax.set_ylabel(metric_name)
-            ax.set_ylim(0, 1)
-            ax.tick_params(axis='x', rotation=45)
-            
-            # Add value labels on bars
-            for bar, value in zip(bars, values):
-                ax.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.02,
-                       f'{value:.3f}', ha='center', va='bottom', fontweight='bold', fontsize=10)
-            
-            # Add horizontal line at 0.5 for reference
-            ax.axhline(y=0.5, color='gray', linestyle='--', alpha=0.7)
-            
-            # Add average line
-            avg_value = np.mean(values)
-            ax.axhline(y=avg_value, color=colors[i], linestyle='-', alpha=0.8, linewidth=2,
-                      label=f'Average: {avg_value:.3f}')
-            ax.legend()
-        
-        plt.suptitle('Per-File Metrics Comparison', fontsize=16, fontweight='bold')
-        plt.tight_layout()
-        
-        if save_path is None:
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            save_path = f"per_file_comparison_{timestamp}.png"
-        
-        plt.savefig(save_path, dpi=300, bbox_inches='tight')
-        plt.close()
-        
-        self.logger.info(f"✅ Per-file comparison plot saved to {save_path}")
-        return save_path
-
-    def generate_per_file_report(self, file_name: str = None) -> str:
-        """Generate detailed report for a specific file or all files."""
-        if not self.per_file_metrics:
-            self.calculate_per_file_metrics()
-        
-        if file_name and file_name not in self.per_file_metrics:
-            raise ValueError(f"File '{file_name}' not found in metrics")
-        
-        files_to_report = [file_name] if file_name else list(self.per_file_metrics.keys())
-        
-        report = []
-        report.append("📊 PER-FILE SCREENING ANALYSIS REPORT")
-        report.append("=" * 60)
-        report.append("")
-        
-        for i, fname in enumerate(files_to_report):
-            if i > 0:
-                report.append("\n" + "─" * 60 + "\n")
-            
-            metrics = self.per_file_metrics[fname]
-            short_name = fname.replace('.ris', '').replace('dummy_shortages_', '')
-            
-            report.append(f"📁 FILE: {short_name}")
-            report.append(f"   Full name: {fname}")
-            report.append("")
-            
-            # Basic Statistics
-            report.append("📈 BASIC STATISTICS")
-            report.append(f"   • Total studies analyzed: {metrics['total_studies']}")
-            report.append(f"   • Studies to include: {metrics['total_include_studies']}")
-            report.append(f"   • Studies to exclude: {metrics['total_exclude_studies']}")
-            report.append(f"   • Correct predictions: {metrics['correct_predictions']} ({metrics['accuracy']:.1%})")
-            report.append(f"   • Incorrect predictions: {metrics['incorrect_predictions']} ({(1-metrics['accuracy']):.1%})")
-            report.append("")
-            
-            # Performance Metrics
-            report.append("🎯 PERFORMANCE METRICS")
-            report.append(f"   • Overall Accuracy: {metrics['accuracy']:.3f} ({metrics['accuracy']*100:.1f}%)")
-            report.append(f"   • Balanced Accuracy: {metrics['balanced_accuracy']:.3f} ({metrics['balanced_accuracy']*100:.1f}%)")
-            report.append(f"   • Precision: {metrics['precision']:.3f} ({metrics['precision']*100:.1f}%)")
-            report.append(f"   • Recall: {metrics['recall']:.3f} ({metrics['recall']*100:.1f}%)")
-            report.append(f"   • F1-Score: {metrics['f1_score']:.3f} ({metrics['f1_score']*100:.1f}%)")
-            report.append("")
-            
-            # Label-specific accuracy
-            report.append("🏷️  LABEL-SPECIFIC ACCURACY")
-            if metrics['total_include_studies'] > 0:
-                report.append(f"   • Include studies accuracy: {metrics['include_accuracy']:.3f} ({metrics['include_accuracy']*100:.1f}%)")
-                report.append(f"     - Correctly identified: {metrics['correct_include_predictions']}/{metrics['total_include_studies']}")
-            else:
-                report.append("   • Include studies accuracy: N/A (no include studies in this file)")
-            
-            if metrics['total_exclude_studies'] > 0:
-                report.append(f"   • Exclude studies accuracy: {metrics['exclude_accuracy']:.3f} ({metrics['exclude_accuracy']*100:.1f}%)")
-                report.append(f"     - Correctly identified: {metrics['correct_exclude_predictions']}/{metrics['total_exclude_studies']}")
-            else:
-                report.append("   • Exclude studies accuracy: N/A (no exclude studies in this file)")
-            report.append("")
-            
-            # Confusion Matrix Details
-            tp = metrics['true_positives']
-            tn = metrics['true_negatives']
-            fp = metrics['false_positives']
-            fn = metrics['false_negatives']
-            
-            report.append("🔍 DETAILED BREAKDOWN")
-            report.append(f"   • True Positives (Correctly included): {tp}")
-            report.append(f"   • True Negatives (Correctly excluded): {tn}")
-            report.append(f"   • False Positives (Incorrectly included): {fp}")
-            report.append(f"   • False Negatives (Incorrectly excluded): {fn}")
-            report.append("")
-            
-            # Performance Assessment
-            report.append("💡 PERFORMANCE ASSESSMENT")
-            
-            if metrics['accuracy'] >= 0.9:
-                assessment = "Excellent performance"
-            elif metrics['accuracy'] >= 0.8:
-                assessment = "Good performance"
-            elif metrics['accuracy'] >= 0.7:
-                assessment = "Fair performance"
-            else:
-                assessment = "Performance needs improvement"
-            
-            report.append(f"   • Overall: {assessment} (Accuracy: {metrics['accuracy']:.3f})")
-            
-            # Specific issues and recommendations
-            issues = []
-            recommendations = []
-            
-            if fp > 0:
-                issues.append(f"{fp} false positive(s) - studies incorrectly included")
-                recommendations.append("Review inclusion criteria to reduce false positives")
-            
-            if fn > 0:
-                issues.append(f"{fn} false negative(s) - relevant studies missed")
-                recommendations.append("Review exclusion criteria to improve sensitivity")
-            
-            if metrics['precision'] < 0.8:
-                issues.append(f"Low precision ({metrics['precision']:.3f}) - many irrelevant studies included")
-            
-            if metrics['recall'] < 0.8:
-                issues.append(f"Low recall ({metrics['recall']:.3f}) - missing relevant studies")
-            
-            if issues:
-                report.append("")
-                report.append("⚠️  IDENTIFIED ISSUES")
-                for issue in issues:
-                    report.append(f"   • {issue}")
-            
-            if recommendations:
-                report.append("")
-                report.append("🔧 RECOMMENDATIONS")
-                for rec in recommendations:
-                    report.append(f"   • {rec}")
-            
-            # Study details for incorrect predictions
-            incorrect_studies = [s for s in metrics['detailed_results'] if not s['correct']]
-            if incorrect_studies:
-                report.append("")
-                report.append("❌ INCORRECT PREDICTIONS")
-                for study in incorrect_studies[:5]:  # Show first 5 incorrect predictions
-                    report.append(f"   • Study {study['study_index']}: {study['title'][:60]}...")
-                    report.append(f"     Expected: {study['true_label']}, Predicted: {study['predicted_label']}")
-                
-                if len(incorrect_studies) > 5:
-                    report.append(f"   ... and {len(incorrect_studies) - 5} more incorrect predictions")
-        
-        report.append("")
-        report.append(f"📅 Report generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-        
-        return "\n".join(report)
-
-    def save_per_file_report(self, file_name: str = None, save_path: str = None) -> str:
-        """Save per-file report to a text file."""
-        report = self.generate_per_file_report(file_name)
-        
-        if save_path is None:
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            file_suffix = f"_{file_name.replace('.ris', '')}" if file_name else "_all_files"
-            output_dir = "analysis_results"
-            os.makedirs(output_dir, exist_ok=True)
-            save_path = os.path.join(output_dir, f"per_file_report{file_suffix}_{timestamp}.txt")
-        
-        with open(save_path, 'w') as f:
-            f.write(report)
-        
-        self.logger.info(f"✅ Per-file report saved to {save_path}")
-        return save_path
-
     def generate_friendly_report(self) -> str:
         """Generate a friendly, human-readable performance report."""
         if not self.metrics:
             raise ValueError("Metrics not calculated. Call calculate_metrics() first.")
-        
         report = []
         report.append("🔍 SCREENING AGENT PERFORMANCE REPORT")
         report.append("=" * 50)
         report.append("")
-        
         # Overview
         total = self.metrics['total_studies']
         correct = self.metrics['correct_predictions']
         accuracy = self.metrics['accuracy']
-        
         report.append(f"📊 OVERVIEW")
-        report.append(f"   • Total studies analyzed: {total}")
-        report.append(f"   • Correct predictions: {correct} ({correct/total*100:.1f}%)")
-        report.append(f"   • Incorrect predictions: {total-correct} ({(total-correct)/total*100:.1f}%)")
+        report.append(f"Total studies: {total}")
+        report.append(f"Correct predictions: {correct}")
+        report.append(f"Accuracy: {accuracy:.3f}")
         report.append("")
-        
-        # Performance Metrics
-        report.append(f"📈 PERFORMANCE METRICS")
-        report.append(f"   • Accuracy: {self.metrics['accuracy']:.3f} ({self.metrics['accuracy']*100:.1f}%)")
-        report.append(f"   • Balanced Accuracy: {self.metrics['balanced_accuracy']:.3f} ({self.metrics['balanced_accuracy']*100:.1f}%)")
-        report.append(f"   • Precision: {self.metrics['precision']:.3f} ({self.metrics['precision']*100:.1f}%)")
-        report.append(f"   • Recall: {self.metrics['recall']:.3f} ({self.metrics['recall']*100:.1f}%)")
-        report.append(f"   • F1-Score: {self.metrics['f1_score']:.3f} ({self.metrics['f1_score']*100:.1f}%)")
+        report.append("## Key Metrics Table\n")
+        report.append(self.get_metrics_table())
         report.append("")
-        
-        # Confusion Matrix
-        tp = self.metrics['true_positives']
-        tn = self.metrics['true_negatives']
-        fp = self.metrics['false_positives']
-        fn = self.metrics['false_negatives']
-        
-        report.append(f"🎯 CONFUSION MATRIX")
-        report.append(f"   • True Positives (Correctly included): {tp}")
-        report.append(f"   • True Negatives (Correctly excluded): {tn}")
-        report.append(f"   • False Positives (Incorrectly included): {fp}")
-        report.append(f"   • False Negatives (Incorrectly excluded): {fn}")
-        report.append("")
-        
-        # Performance Interpretation
-        report.append(f"💡 PERFORMANCE INTERPRETATION")
-        
-        # Accuracy interpretation
-        if accuracy >= 0.9:
-            acc_desc = "Excellent"
-        elif accuracy >= 0.8:
-            acc_desc = "Good"
-        elif accuracy >= 0.7:
-            acc_desc = "Fair"
-        else:
-            acc_desc = "Needs Improvement"
-        
-        report.append(f"   • Overall Performance: {acc_desc} (Accuracy: {accuracy:.3f})")
-        
-        # Precision interpretation
-        precision = self.metrics['precision']
-        if precision >= 0.9:
-            prec_desc = "Very reliable - few false positives"
-        elif precision >= 0.8:
-            prec_desc = "Reliable - some false positives"
-        elif precision >= 0.7:
-            prec_desc = "Moderately reliable - notable false positives"
-        else:
-            prec_desc = "Many false positives - review inclusion criteria"
-        
-        report.append(f"   • Precision: {prec_desc} ({precision:.3f})")
-        
-        # Recall interpretation
-        recall = self.metrics['recall']
-        if recall >= 0.9:
-            rec_desc = "Excellent sensitivity - catches most relevant studies"
-        elif recall >= 0.8:
-            rec_desc = "Good sensitivity - catches most relevant studies"
-        elif recall >= 0.7:
-            rec_desc = "Moderate sensitivity - misses some relevant studies"
-        else:
-            rec_desc = "Low sensitivity - misses many relevant studies"
-        
-        report.append(f"   • Recall: {rec_desc} ({recall:.3f})")
-        report.append("")
-        
-        # Recommendations
-        report.append(f"🔧 RECOMMENDATIONS")
-        
-        if precision < 0.8 and recall >= 0.8:
-            report.append("   • Consider tightening inclusion criteria to reduce false positives")
-        elif recall < 0.8 and precision >= 0.8:
-            report.append("   • Consider broadening inclusion criteria to catch more relevant studies")
-        elif precision < 0.8 and recall < 0.8:
-            report.append("   • Review and refine both inclusion and exclusion criteria")
-        else:
-            report.append("   • Performance is good! Consider testing on larger datasets")
-        
-        if fp > 0:
-            report.append(f"   • Investigate {fp} false positive(s) to understand misclassification patterns")
-        if fn > 0:
-            report.append(f"   • Investigate {fn} false negative(s) to improve sensitivity")
-        
-        report.append("")
-        report.append(f"📅 Report generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-        
+        report.append("## Model Parameters Table\n")
+        report.append(self.get_model_parameters_table())
         return "\n".join(report)
 
     def save_friendly_report(self, save_path: str = None) -> str:
         """Save the friendly report to a text file."""
         report = self.generate_friendly_report()
-        
         if save_path is None:
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             save_path = f"performance_report_{timestamp}.txt"
-        
         with open(save_path, 'w') as f:
             f.write(report)
-        
-        self.logger.info(f"✅ Performance report saved to {save_path}")
-        return save_path
-
-    def create_comprehensive_analysis_plot(self, save_path: str = None) -> str:
-        """Create a comprehensive plot with confusion matrix, core accuracy, and per-file accuracy."""
-        if not self.metrics:
-            raise ValueError("Metrics not calculated. Call calculate_metrics() first.")
-        
-        # Calculate per-file accuracy
-        file_accuracy = {}
-        for result in self.detailed_results:
-            file_name = result['file']
-            if file_name not in file_accuracy:
-                file_accuracy[file_name] = {'correct': 0, 'total': 0}
-            file_accuracy[file_name]['total'] += 1
-            if result['correct']:
-                file_accuracy[file_name]['correct'] += 1
-        
-        # Calculate accuracy rates
-        for file_name in file_accuracy:
-            file_accuracy[file_name]['accuracy'] = (
-                file_accuracy[file_name]['correct'] / file_accuracy[file_name]['total']
-            )
-        
-        # Create subplot layout
-        fig = plt.figure(figsize=(16, 10))
-        gs = fig.add_gridspec(2, 3, height_ratios=[1, 1], width_ratios=[1, 1, 1])
-        
-        # 1. Confusion Matrix (top left)
-        ax1 = fig.add_subplot(gs[0, 0])
-        cm = np.array(self.metrics['confusion_matrix'])
-        sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', 
-                   xticklabels=['Exclude', 'Include'], 
-                   yticklabels=['Exclude', 'Include'],
-                   ax=ax1)
-        ax1.set_title('Confusion Matrix', fontsize=14, fontweight='bold')
-        ax1.set_ylabel('True Label')
-        ax1.set_xlabel('Predicted Label')
-        
-        # 2. Core Accuracy Metrics (top middle)
-        ax2 = fig.add_subplot(gs[0, 1])
-        metrics_to_plot = ['accuracy', 'balanced_accuracy', 'precision', 'recall', 'f1_score']
-        values = [self.metrics[metric] for metric in metrics_to_plot]
-        labels = ['Accuracy', 'Balanced\nAccuracy', 'Precision', 'Recall', 'F1-Score']
-        
-        bars = ax2.bar(labels, values, color=['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd'])
-        ax2.set_title('Core Performance Metrics', fontsize=14, fontweight='bold')
-        ax2.set_ylabel('Score')
-        ax2.set_ylim(0, 1)
-        ax2.tick_params(axis='x', rotation=45)
-        
-        # Add value labels on bars
-        for bar, value in zip(bars, values):
-            ax2.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.02, 
-                    f'{value:.3f}', ha='center', va='bottom', fontweight='bold', fontsize=10)
-        
-        # Add horizontal line at 0.5 for reference
-        ax2.axhline(y=0.5, color='gray', linestyle='--', alpha=0.7, label='Random Baseline')
-        ax2.legend()
-        
-        # 3. Per-File Accuracy (top right)
-        ax3 = fig.add_subplot(gs[0, 2])
-        file_names = list(file_accuracy.keys())
-        file_acc_values = [file_accuracy[f]['accuracy'] for f in file_names]
-        
-        # Shorten file names for display
-        short_names = [f.replace('.ris', '').replace('dummy_shortages_', '') for f in file_names]
-        
-        bars_files = ax3.bar(short_names, file_acc_values, color=['#ff9999', '#66b3ff'])
-        ax3.set_title('Per-File Accuracy', fontsize=14, fontweight='bold')
-        ax3.set_ylabel('Accuracy')
-        ax3.set_ylim(0, 1)
-        ax3.tick_params(axis='x', rotation=45)
-        
-        # Add value labels and count info
-        for i, (bar, acc, file_name) in enumerate(zip(bars_files, file_acc_values, file_names)):
-            correct = file_accuracy[file_name]['correct']
-            total = file_accuracy[file_name]['total']
-            ax3.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.02, 
-                    f'{acc:.3f}\n({correct}/{total})', ha='center', va='bottom', 
-                    fontweight='bold', fontsize=9)
-        
-        # Add horizontal line at 0.5 for reference
-        ax3.axhline(y=0.5, color='gray', linestyle='--', alpha=0.7)
-        
-        # 4. Classification Report as Text (bottom spanning all columns)
-        ax4 = fig.add_subplot(gs[1, :])
-        ax4.axis('off')
-        
-        # Create classification report text
-        tp = self.metrics['true_positives']
-        tn = self.metrics['true_negatives']
-        fp = self.metrics['false_positives']
-        fn = self.metrics['false_negatives']
-        
-        report_text = f"""
-DETAILED CLASSIFICATION ANALYSIS
-
-Overall Performance:
-• Total Studies: {self.metrics['total_studies']}
-• Correct Predictions: {self.metrics['correct_predictions']} ({self.metrics['accuracy']:.1%})
-• Incorrect Predictions: {self.metrics['incorrect_predictions']} ({(1-self.metrics['accuracy']):.1%})
-
-Confusion Matrix Breakdown:
-• True Positives (Correctly Included): {tp}
-• True Negatives (Correctly Excluded): {tn}  
-• False Positives (Incorrectly Included): {fp}
-• False Negatives (Incorrectly Excluded): {fn}
-
-Per-File Performance:
-"""
-        
-        for file_name in file_names:
-            acc = file_accuracy[file_name]['accuracy']
-            correct = file_accuracy[file_name]['correct']
-            total = file_accuracy[file_name]['total']
-            report_text += f"• {file_name}: {acc:.1%} ({correct}/{total} correct)\n"
-        
-        # Performance insights
-        if self.metrics['accuracy'] < 0.7:
-            report_text += f"\n⚠️  Performance Alert: Overall accuracy ({self.metrics['accuracy']:.1%}) is below 70%"
-        if fp > 0:
-            report_text += f"\n🔍 Review: {fp} false positive(s) need investigation"
-        if fn > 0:
-            report_text += f"\n📋 Review: {fn} false negative(s) indicate missed relevant studies"
-        
-        ax4.text(0.05, 0.95, report_text, transform=ax4.transAxes, fontsize=11,
-                verticalalignment='top', fontfamily='monospace',
-                bbox=dict(boxstyle="round,pad=0.5", facecolor='lightgray', alpha=0.8))
-        
-        # Overall title
-        fig.suptitle('Comprehensive Screening Agent Analysis', fontsize=16, fontweight='bold', y=0.98)
-        
-        if save_path is None:
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            save_path = f"comprehensive_analysis_{timestamp}.png"
-        
-        plt.tight_layout()
-        plt.subplots_adjust(top=0.93)
-        plt.savefig(save_path, dpi=300, bbox_inches='tight')
-        plt.close()
-        
-        self.logger.info(f"✅ Comprehensive analysis plot saved to {save_path}")
+        self.logger.info(f"✅ Friendly report saved to {save_path}")
         return save_path
 
 

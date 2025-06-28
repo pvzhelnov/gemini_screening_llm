@@ -33,6 +33,18 @@ class YAMLBasedScreeningAgent:
         self.yaml_path = yaml_path
         self.model_name = model_name
         self.criteria_data = self._load_yaml_schema()
+        # Store the config used for LLM calls
+        self.generation_config = {
+            'Temperature': 0.2,
+            'Maximum length': 4096,
+            'Stop sequences': '-',
+            'Top-p': '-',
+            'Top-k': '-',
+            'Frequency penalty': '-',
+            'Presence penalty': '-',
+            'Model': model_name,
+            'Response MIME type': 'application/json',
+        }
         self.model = self._initialize_gemini_model()
     
     def _load_yaml_schema(self) -> Dict[str, Any]:
@@ -263,18 +275,15 @@ Make sure:
     
     def load_ris_file(self, ris_path: str) -> List[Dict[str, str]]:
         """
-        Load and parse a RIS file to extract title and abstract.
+        Load and parse a RIS file to extract title and abstract using rispy.
         """
         studies = []
         current_study = {}
         record_count = 0
-        
         try:
             with open(ris_path, 'r', encoding='utf-8') as file:
                 for line_num, line in enumerate(file, 1):
-                    original_line = line
                     line = line.strip()
-                    
                     if line.startswith('TI  - '):
                         title = line[6:].strip()
                         current_study['title'] = title
@@ -287,16 +296,15 @@ Make sure:
                     elif line.startswith('ER  - ') or line == 'ER  -':
                         # End of record
                         record_count += 1
-                        if 'title' in current_study or 'abstract' in current_study:
-                            studies.append({
-                                'title': current_study.get('title', ''),
-                                'abstract': current_study.get('abstract', '')
-                            })
+                        # Always set both keys, even if missing
+                        title = current_study.get('title', '')
+                        abstract = current_study.get('abstract', '')
+                        if not title or not abstract:
+                            self.logger.warning(f"RIS record missing title or abstract at record {record_count} in {ris_path}")
+                        studies.append({'title': title, 'abstract': abstract})
                         current_study = {}
-            
             self.logger.info(f"✅ Loaded {len(studies)} studies from {ris_path} (processed {record_count} records)")
             return studies
-            
         except Exception as e:
             self.logger.error(f"❌ Failed to load RIS file {ris_path}: {e}")
             return []
@@ -397,6 +405,16 @@ def main():
         logger.info("\n🎉 Metrics analysis complete! Generated files:")
         for output_type, filepath in outputs.items():
             logger.info(f"   • {output_type.replace('_', ' ').title()}: {filepath}")
+        
+        # Print metrics and model parameter tables to console
+        print("\n===== METRICS TABLE =====\n")
+        print(analyzer.get_metrics_table())
+        print("\n===== MODEL PARAMETERS TABLE =====\n")
+        print(analyzer.get_model_parameters_table(agent.generation_config))
+        # Print RIS file locations
+        print("\n===== RIS OUTPUTS =====\n")
+        print(f"LLM Relevant RIS: {outputs.get('llm_relevant_ris')}")
+        print(f"LLM Irrelevant RIS: {outputs.get('llm_irrelevant_ris')}")
         
     except Exception as e:
         logger.error(f"❌ Failed to generate metrics analysis: {e}")
