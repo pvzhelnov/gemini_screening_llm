@@ -1,0 +1,32 @@
+🔍 SCREENING AGENT PERFORMANCE REPORT
+==================================================
+
+📊 OVERVIEW
+Total studies: 6
+Correct predictions: 5
+Accuracy: 0.833
+
+## Key Metrics Table
+
+| Metric | Value |
+|--------|-------|
+| Sensitivity (Recall) | 1.000 |
+| Specificity | 0.667 |
+| Balanced Accuracy | 0.833 |
+| Accuracy | 0.833 |
+| Precision | 0.750 |
+| NPV | 1.000 |
+| F1 Score | 0.857 |
+
+
+## Model Parameters Table
+
+| Parameter | Value |
+|-----------|-------|
+| Temperature | 0.2 |
+| Maximum length | 4096 |
+| Stop sequences | - |
+| Top-p | - |
+| Top-k | - |
+| Frequency penalty | - |
+| Presence penalty | - |
