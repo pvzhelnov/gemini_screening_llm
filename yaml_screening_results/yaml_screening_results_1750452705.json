@@ -1,0 +1,202 @@
+[
+  {
+    "file": "dummy_shortages_irrelevant.ris",
+    "expected_label": "irrelevant",
+    "total_studies": 3,
+    "results": [
+      {
+        "question_1_response": {
+          "unique_question_id": 1,
+          "question_formulation": "Is this an observational study?",
+          "response": "Yes",
+          "reasoning": "The study is a multicenter retrospective study, which is a type of observational study."
+        },
+        "question_2_response": {
+          "unique_question_id": 2,
+          "question_formulation": "Does this study examine pharmaceutical products?",
+          "response": "Yes",
+          "reasoning": "The study examines essential medicines, which are pharmaceutical products."
+        },
+        "question_3_response": {
+          "unique_question_id": 3,
+          "question_formulation": "Does this study examine drug supply chain disruptions?",
+          "response": "Yes",
+          "reasoning": "The study examines medicine stockouts and procurement delays, which are drug supply chain disruptions."
+        },
+        "question_4_response": {
+          "unique_question_id": 4,
+          "question_formulation": "Does this study examine the impact on drug utilization and access?",
+          "response": "Maybe/Unclear",
+          "reasoning": "The study mentions medicine availability, but it is unclear if it examines the impact on drug utilization and access using population-level data."
+        },
+        "final_decision": "Include",
+        "decision_reasoning": "Based on the flow logic, this study should be included because questions 1, 2, and 3 are 'Yes' and question 4 is 'Maybe/Unclear'.",
+        "study_index": 0,
+        "title": "Impact of Global Supply Chain Disruptions on Essential Medicine Availability in European Hospitals.",
+        "abstract": "Background: The COVID-19 pandemic exposed critical vulnerabilities in pharmaceutical supply chains, particularly affecting essential medicine availability in hospital settings across Europe. Objective: To assess the impact of supply chain disruptions on medicine availability and identify factors contributing to stockout events in European hospitals during 2020-2022., Methods: A multicenter retrospective study was conducted across 45 hospitals in 12 European countries. Data on medicine stockouts, procurement delays, and alternative sourcing strategies were collected from hospital pharmacy databases. Statistical analysis included descriptive statistics and regression modeling to identify predictors of stockout events., Results: A total of 2,847 stockout events were documented across participating hospitals, affecting 892 unique medicines. Critical care medications showed the highest vulnerability with 34% experiencing stockouts lasting more than 7 days. Hospitals with diversified supplier networks showed 28% fewer stockout events compared to those relying on single suppliers. The implementation of strategic reserves reduced stockout duration by an average of 3.2 days., Conclusions: Supply chain diversification and strategic stockpiling significantly improve medicine availability during crisis periods. European hospitals should strengthen procurement resilience through multi-supplier strategies and enhanced inventory management systems."
+      },
+      {
+        "question_1_response": {
+          "unique_question_id": 1,
+          "question_formulation": "Is this an observational study?",
+          "response": "Yes",
+          "reasoning": "The study implemented AI-driven predictive models in community pharmacies over 18 months and tracked outcomes, suggesting an observational study design."
+        },
+        "question_2_response": {
+          "unique_question_id": 2,
+          "question_formulation": "Does this study examine pharmaceutical products?",
+          "response": "Yes",
+          "reasoning": "The study examines inventory management of pharmaceutical products in community pharmacies, including chronic disease medications like diabetes and cardiovascular drugs."
+        },
+        "question_3_response": {
+          "unique_question_id": 3,
+          "question_formulation": "Does this study examine drug supply chain disruptions?",
+          "response": "Maybe/Unclear",
+          "reasoning": "The study mentions stockouts, which can be a result of supply chain disruptions, but it is not the primary focus. It's unclear if the study directly examines the causes of these stockouts."
+        },
+        "question_4_response": {
+          "unique_question_id": 4,
+          "question_formulation": "Does this study examine the impact on drug utilization and access?",
+          "response": "No",
+          "reasoning": "While the study mentions prescription fill rates and improvements in availability, it does not explicitly examine the impact of drug supply chain disruptions on drug utilization and access using population-level data. The focus is on inventory management within the pharmacies."
+        },
+        "final_decision": "Exclude",
+        "decision_reasoning": "Based on the flow logic, this study should be excluded because question 4 was answered with 'No'.",
+        "study_index": 1,
+        "title": "Artificial Intelligence-Driven Predictive Models for Pharmaceutical Inventory Management in Community Pharmacies.",
+        "abstract": "Introduction: Traditional inventory management in community pharmacies relies on historical consumption patterns, often resulting in overstocking or stockouts. This study evaluates the effectiveness of machine learning algorithms in optimizing pharmaceutical inventory levels., Methodology: We implemented AI-driven predictive models in 127 community pharmacies across three metropolitan areas over 18 months. The system incorporated real-time prescription data, seasonal variations, and local health trends to forecast demand. Primary outcomes included inventory turnover rates, stockout frequency, and expired medication waste., Findings: Pharmacies using AI-driven inventory management showed a 42% reduction in stockout events and 31% decrease in expired medication waste. Inventory turnover improved by 25%, while maintaining 98.7% prescription fill rates. The system demonstrated particular effectiveness for chronic disease medications, with diabetes and cardiovascular drugs showing the most significant improvements in availability., Discussion: AI-powered inventory management represents a paradigm shift in pharmaceutical logistics. The integration of predictive analytics with traditional pharmacy operations enables proactive rather than reactive inventory decisions. Implementation challenges included staff training and initial system calibration, but benefits emerged within 6 months of deployment., Conclusion: Machine learning algorithms significantly enhance pharmaceutical inventory optimization in community pharmacy settings, improving patient access while reducing waste and operational costs."
+      },
+      {
+        "question_1_response": {
+          "unique_question_id": 1,
+          "question_formulation": "Is this an observational study?",
+          "response": "Yes",
+          "reasoning": "The study design includes policy analysis and stakeholder interviews, which aligns with observational study designs."
+        },
+        "question_2_response": {
+          "unique_question_id": 2,
+          "question_formulation": "Does this study examine pharmaceutical products?",
+          "response": "Yes",
+          "reasoning": "The study examines oncology medications, which are pharmaceutical products."
+        },
+        "question_3_response": {
+          "unique_question_id": 3,
+          "question_formulation": "Does this study examine drug supply chain disruptions?",
+          "response": "Yes",
+          "reasoning": "The study examines shortages of oncology medications, which are drug supply chain disruptions."
+        },
+        "question_4_response": {
+          "unique_question_id": 4,
+          "question_formulation": "Does this study examine the impact on drug utilization and access?",
+          "response": "Maybe/Unclear",
+          "reasoning": "The study mentions maintaining patient access but does not explicitly examine the impact on drug utilization and access using population-level data. It mentions survival analysis, but it is unclear if this is directly linked to drug utilization."
+        },
+        "final_decision": "Include",
+        "decision_reasoning": "Based on the flow logic, this study should be included because it meets the inclusion criteria for questions 1, 2, and 3, and question 4 is 'Maybe/Unclear'.",
+        "study_index": 2,
+        "title": "Regulatory Framework for Emergency Drug Importation: Lessons from the Oncology Medicine Crisis in Australia.",
+        "abstract": "Context: Between 2021 and 2022, Australia experienced severe shortages of critical oncology medications, prompting emergency regulatory measures to facilitate drug importation from overseas suppliers. This crisis highlighted gaps in existing pharmaceutical supply chain regulations., Objective: To evaluate the effectiveness of emergency drug importation procedures and propose improvements to regulatory frameworks for managing future medicine shortages., Design: Policy analysis combined with stakeholder interviews from regulatory agencies, hospitals, and pharmaceutical companies. Document analysis of emergency approvals and importation records was conducted., Participants: Interviews were conducted with 67 stakeholders including hospital pharmacists, oncologists, regulatory officials, and pharmaceutical industry representatives., Main Outcomes: Emergency importation procedures enabled access to 23 critical oncology medications during the crisis period. However, the process revealed significant bureaucratic delays, with average approval times of 14 days for emergency applications. Quality assurance protocols for imported medications required standardization, and communication between regulatory bodies and healthcare providers needed improvement., Results: Emergency importation programs successfully maintained patient access to essential cancer treatments during the crisis. Survival analysis showed no significant differences in patient outcomes between standard and imported medications. However, the ad-hoc nature of emergency procedures created uncertainty for healthcare providers and patients., Conclusions: Proactive regulatory frameworks for emergency drug importation can effectively mitigate medicine shortage impacts. Australia should establish pre-approved pathways for critical medication importation and strengthen international regulatory harmonization to prevent future crises."
+      }
+    ]
+  },
+  {
+    "file": "dummy_shortages_relevant.ris",
+    "expected_label": "relevant",
+    "total_studies": 3,
+    "results": [
+      {
+        "question_1_response": {
+          "unique_question_id": 1,
+          "question_formulation": "Is this an observational study?",
+          "response": "Yes",
+          "reasoning": "The study is a retrospective cohort study, which is a type of observational study."
+        },
+        "question_2_response": {
+          "unique_question_id": 2,
+          "question_formulation": "Does this study examine pharmaceutical products?",
+          "response": "Yes",
+          "reasoning": "The study examines insulin, which is a pharmaceutical product."
+        },
+        "question_3_response": {
+          "unique_question_id": 3,
+          "question_formulation": "Does this study examine drug supply chain disruptions?",
+          "response": "Yes",
+          "reasoning": "The study examines an insulin shortage, which is a drug supply chain disruption."
+        },
+        "question_4_response": {
+          "unique_question_id": 4,
+          "question_formulation": "Does this study examine the impact on drug utilization and access?",
+          "response": "Yes",
+          "reasoning": "The study examines the impact of the insulin shortage on HbA1c levels, diabetic ketoacidosis episodes, insulin dosing patterns, emergency department visits and hospitalization rates, which are all related to drug utilization and access."
+        },
+        "final_decision": "Include",
+        "decision_reasoning": "Based on the flow logic, this study should be included because it meets all inclusion criteria.",
+        "study_index": 0,
+        "title": "Impact of Insulin Shortage on Diabetes Management and Glycemic Control in Type 1 Diabetic Patients.",
+        "abstract": "OBJECTIVE: To assess the impact of the global insulin shortage on diabetes management patterns and glycemic control in patients with type 1 diabetes mellitus., MATERIALS AND METHODS: We conducted a retrospective cohort study of 12,456 type 1 diabetic patients from 187 endocrinology clinics across North America between January 2022 and December 2023. The insulin shortage period was defined from March 2023 to September 2023. Primary outcomes included HbA1c levels, frequency of diabetic ketoacidosis episodes, and insulin dosing patterns. Secondary outcomes included emergency department visits and hospitalization rates., RESULTS: During the shortage period, 67.8% of patients experienced changes in their insulin regimen. Mean HbA1c levels increased from 7.2% (95% CI 7.1-7.3) pre-shortage to 8.1% (95% CI 7.9-8.3) during shortage (p<0.001). Diabetic ketoacidosis episodes increased by 45% compared to pre-shortage rates. Alternative insulin formulations were used in 78% of affected patients, with 34% requiring dose adjustments. Geographic variation in shortage impact ranged from 23% to 89% across different regions., CONCLUSION: The insulin shortage significantly impacted glycemic control in type 1 diabetic patients, leading to increased complications and healthcare utilization. Robust shortage mitigation strategies are essential for maintaining diabetes care quality. Copyright \u00a9 2024 American Diabetes Association."
+      },
+      {
+        "question_1_response": {
+          "unique_question_id": 1,
+          "question_formulation": "Is this an observational study?",
+          "response": "Yes",
+          "reasoning": "The study is a retrospective analysis using data from multiple cancer centers and employs an interrupted time series analysis, which qualifies it as an observational study."
+        },
+        "question_2_response": {
+          "unique_question_id": 2,
+          "question_formulation": "Does this study examine pharmaceutical products?",
+          "response": "Yes",
+          "reasoning": "The study examines chemotherapy drugs like carboplatin, oxaliplatin, and docetaxel."
+        },
+        "question_3_response": {
+          "unique_question_id": 3,
+          "question_formulation": "Does this study examine drug supply chain disruptions?",
+          "response": "Yes",
+          "reasoning": "The study explicitly mentions and evaluates the impact of chemotherapy drug shortages, which are a form of drug supply chain disruption."
+        },
+        "question_4_response": {
+          "unique_question_id": 4,
+          "question_formulation": "Does this study examine the impact on drug utilization and access?",
+          "response": "Yes",
+          "reasoning": "The study examines the impact of drug shortages on treatment modifications, delays, and changes in treatment protocols, which are all related to drug utilization and access."
+        },
+        "final_decision": "Include",
+        "decision_reasoning": "Based on the flow logic, this study should be included because it is an observational study that examines pharmaceutical products, drug supply chain disruptions, and the impact on drug utilization and access.",
+        "study_index": 1,
+        "title": "Oncology Drug Shortages and Treatment Modifications: A Multi-Center Analysis of Chemotherapy Protocol Changes.",
+        "abstract": "BACKGROUND: Oncology drug shortages pose significant challenges to cancer treatment delivery and patient outcomes. Limited research exists on how shortages affect treatment protocols and clinical decision-making., AIMS: We evaluated the impact of chemotherapy drug shortages on treatment modifications, delays, and patient outcomes across multiple cancer centers., METHODS: A retrospective analysis was conducted using data from 45 cancer centers between 2020 and 2022. We analyzed treatment patterns for 8,934 patients receiving chemotherapy during documented shortage periods for carboplatin, oxaliplatin, and docetaxel. Interrupted time series analysis was used to assess changes in treatment protocols, dosing modifications, and clinical outcomes., RESULTS: Treatment delays occurred in 42.7% of patients during shortage periods compared to 8.9% during non-shortage periods (p<0.0001). Protocol modifications were implemented in 76.3% of cases, including dose reductions (45.2%), alternative drug substitutions (38.9%), and treatment schedule changes (51.7%). Overall survival was not significantly different between shortage and non-shortage periods (HR 1.04, 95% CI 0.89-1.21, p=0.63), though time to progression increased by 3.2 weeks on average., CONCLUSIONS: Oncology drug shortages necessitate frequent treatment modifications but do not appear to significantly compromise survival outcomes when managed with appropriate clinical protocols. Proactive shortage management strategies are crucial for maintaining treatment quality in oncology practice. Copyright \u00a9 2023 American Society of Clinical Oncology."
+      },
+      {
+        "question_1_response": {
+          "unique_question_id": 1,
+          "question_formulation": "Is this an observational study?",
+          "response": "Yes",
+          "reasoning": "The study is a national surveillance study analyzing antibiotic prescribing data, which is an observational study design."
+        },
+        "question_2_response": {
+          "unique_question_id": 2,
+          "question_formulation": "Does this study examine pharmaceutical products?",
+          "response": "Yes",
+          "reasoning": "The study examines amoxicillin and alternative antibiotics such as azithromycin, cephalexin, and clindamycin."
+        },
+        "question_3_response": {
+          "unique_question_id": 3,
+          "question_formulation": "Does this study examine drug supply chain disruptions?",
+          "response": "Yes",
+          "reasoning": "The study examines the amoxicillin shortage in 2023, which is a drug supply chain disruption."
+        },
+        "question_4_response": {
+          "unique_question_id": 4,
+          "question_formulation": "Does this study examine the impact on drug utilization and access?",
+          "response": "Yes",
+          "reasoning": "The study examines changes in antibiotic prescribing patterns (utilization) during the amoxicillin shortage. It also looks at the impact on healthcare costs and treatment failure rates."
+        },
+        "final_decision": "Include",
+        "decision_reasoning": "Based on the flow logic, this study should be included because it is an observational study that examines pharmaceutical products, drug supply chain disruptions, and the impact on drug utilization and access.",
+        "study_index": 2,
+        "title": "Antibiotic Resistance Patterns During Amoxicillin Shortage: A National Surveillance Study.",
+        "abstract": "Introduction: The widespread amoxicillin shortage in 2023 forced clinicians to use alternative antibiotics, potentially impacting resistance patterns. This study examines changes in antibiotic prescribing and resistance during the shortage period. Objectives: The primary objective was to assess changes in antibiotic prescribing patterns and antimicrobial resistance rates during the amoxicillin shortage. Secondary objectives included evaluation of clinical outcomes and healthcare costs. Methods: This national surveillance study analyzed antibiotic prescribing data from 892 healthcare facilities across the United States from January 2022 to December 2023. Resistance patterns were assessed using National Healthcare Safety Network data. Clinical outcomes and costs were compared between shortage and non-shortage periods. Results: During the amoxicillin shortage, prescriptions for alternative antibiotics increased: azithromycin (+67%), cephalexin (+89%), and clindamycin (+43%). Resistance rates to azithromycin in Streptococcus pneumoniae increased from 12.4% to 19.7% (p=0.003). Healthcare costs increased by an average of $340 per patient due to more expensive alternative therapies. Treatment failure rates increased from 4.2% to 7.8% for respiratory tract infections (p<0.001). Length of stay for hospitalized patients increased by 1.3 days on average. Conclusion: The amoxicillin shortage led to increased use of broad-spectrum antibiotics, contributing to rising resistance rates and increased healthcare costs. Strategic antibiotic stewardship during shortages is essential to minimize long-term resistance implications. Copyright \u00a9 The Author(s) 2024."
+      }
+    ]
+  }
+]
