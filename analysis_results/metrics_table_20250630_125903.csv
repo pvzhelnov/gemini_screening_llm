@@ -1,0 +1,8 @@
+Metric,Value
+Sensitivity (Recall),0.3333333333333333
+Specificity,0.6666666666666666
+Balanced Accuracy,0.5
+Accuracy,0.5
+Precision,0.5
+NPV,0.5
+F1 Score,0.4
